@@ -24,7 +24,7 @@ export default function SelectInterviewer() {
 
   const handleSelectInterviewer = (interviewerId: InterviewerId) => {
     // 選択したインタビュワーIDをCookieに保存
-    Cookies.set('selected_interviewer', interviewerId, { expires: 30 });
+    Cookies.set('selected_interviewer', interviewerId, { expires: 30, path: '/' });
 
     // インタビューページへ遷移
     router.push('/interview');

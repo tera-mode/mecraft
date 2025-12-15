@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase/admin';
-import { FixedUserData, InterviewSession, ChatMessage, InterviewerId } from '@/types';
+import {
+  FixedUserData,
+  InterviewSession,
+  ChatMessage,
+  InterviewerId,
+  InterviewData,
+} from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
     const { userId, interviewData, messages, interviewerId, sessionId } =
       await request.json();
 
-    if (!userId || !interviewData || !messages || !interviewerId || !sessionId) {
+    // userIdはオプショナル（ゲストユーザーの場合はundefined）
+    if (!interviewData || !messages || !interviewerId || !sessionId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -23,8 +30,8 @@ export async function POST(request: NextRequest) {
         timestamp: new Date(msg.timestamp),
       })),
       data: {
-        fixed: interviewData as FixedUserData,
-        dynamic: {},
+        fixed: interviewData.fixed as FixedUserData, // 固定情報
+        dynamic: interviewData.dynamic || {}, // 深掘り情報
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -38,24 +45,26 @@ export async function POST(request: NextRequest) {
       .collection('interviews')
       .add(interviewSession);
 
-    // ユーザードキュメントを更新または作成
-    const userRef = adminDb.collection('users').doc(userId);
-    const userDoc = await userRef.get();
+    // ログインユーザーの場合のみユーザードキュメントを更新または作成
+    if (userId) {
+      const userRef = adminDb.collection('users').doc(userId);
+      const userDoc = await userRef.get();
 
-    if (userDoc.exists) {
-      // 既存ユーザー：インタビューIDを追加
-      await userRef.update({
-        lastLoginAt: new Date(),
-        updatedAt: new Date(),
-      });
-    } else {
-      // 新規ユーザー：ドキュメントを作成
-      await userRef.set({
-        uid: userId,
-        createdAt: new Date(),
-        lastLoginAt: new Date(),
-        updatedAt: new Date(),
-      });
+      if (userDoc.exists) {
+        // 既存ユーザー：最終ログイン日時を更新
+        await userRef.update({
+          lastLoginAt: new Date(),
+          updatedAt: new Date(),
+        });
+      } else {
+        // 新規ユーザー：ドキュメントを作成
+        await userRef.set({
+          uid: userId,
+          createdAt: new Date(),
+          lastLoginAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
     }
 
     return NextResponse.json({

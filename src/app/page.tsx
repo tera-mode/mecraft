@@ -3,17 +3,35 @@
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'js-cookie';
+import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
+  const { signInAsGuest } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleGuestStart = () => {
-    // ゲストセッションIDを生成してCookieに保存
-    const sessionId = uuidv4();
-    Cookies.set('guest_session_id', sessionId, { expires: 30 }); // 30日間有効
+  const handleGuestStart = async () => {
+    setIsLoading(true);
+    try {
+      // 匿名認証を実行
+      console.log('Starting anonymous authentication...');
+      await signInAsGuest();
+      console.log('Anonymous authentication successful!');
 
-    // インタビュワー選択画面へ遷移
-    router.push('/select-interviewer');
+      // ゲストセッションIDを生成してCookieに保存
+      const sessionId = uuidv4();
+      Cookies.set('guest_session_id', sessionId, { expires: 30, path: '/' }); // 30日間有効
+      console.log('Guest session ID created:', sessionId);
+
+      // インタビュワー選択画面へ遷移
+      router.push('/select-interviewer');
+    } catch (error) {
+      console.error('Failed to start as guest:', error);
+      alert('ゲストとして開始できませんでした。もう一度お試しください。');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleLoginStart = () => {
@@ -56,9 +74,10 @@ export default function Home() {
         <div className="flex w-full max-w-md flex-col gap-4">
           <button
             onClick={handleGuestStart}
-            className="rounded-full bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg"
+            disabled={isLoading}
+            className="rounded-full bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            ゲストとして始める
+            {isLoading ? '準備中...' : 'ゲストとして始める'}
           </button>
           <button
             onClick={handleLoginStart}

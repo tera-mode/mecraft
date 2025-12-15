@@ -6,9 +6,11 @@ import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { getInterviewer } from '@/lib/interviewers';
 import { ChatMessage, InterviewerId } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Interview() {
   const router = useRouter();
+  const { user } = useAuth();
   const [interviewerId, setInterviewerId] = useState<InterviewerId | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
@@ -28,6 +30,8 @@ export default function Interview() {
       return;
     }
 
+    console.log('Interview initialized. User:', user ? user.uid : 'not yet loaded');
+
     setInterviewerId(selectedInterviewer);
 
     // 初期メッセージを設定
@@ -38,7 +42,7 @@ export default function Interview() {
     };
 
     setMessages([initialMessage]);
-  }, [router]);
+  }, [router, user]);
 
   // メッセージが追加されたら自動スクロール
   useEffect(() => {
@@ -88,18 +92,58 @@ export default function Interview() {
       // インタビュー完了チェック
       if (data.isCompleted) {
         setIsCompleted(true);
-        const updatedMessages = [...messages, assistantMessage];
-        // インタビューデータとメッセージをCookieに保存
-        Cookies.set('interview_data', JSON.stringify(data.interviewData), {
-          expires: 30,
-        });
-        Cookies.set('interview_messages', JSON.stringify(updatedMessages), {
-          expires: 30,
-        });
-        // 2秒後に結果ページへ遷移
-        setTimeout(() => {
-          router.push('/result');
-        }, 2000);
+        const updatedMessages = [...messages, userMessage, assistantMessage];
+
+        console.log('Interview completed! Data:', data.interviewData);
+
+        // interviewDataの構造を拡張（fixed + dynamic）
+        const interviewDataToSave = {
+          fixed: {
+            name: data.interviewData.name,
+            nickname: data.interviewData.nickname,
+            gender: data.interviewData.gender,
+            age: data.interviewData.age,
+            location: data.interviewData.location,
+            occupation: data.interviewData.occupation,
+            occupationDetail: data.interviewData.occupationDetail,
+            selectedInterviewer: interviewerId,
+          },
+          dynamic: data.interviewData.dynamic || {}, // DynamicDataを含める
+        };
+
+        console.log('Saving to Firestore immediately...');
+
+        // Firestoreに直接保存
+        try {
+          const saveResponse = await fetch('/api/save-interview', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: user?.uid,
+              interviewData: interviewDataToSave,
+              messages: updatedMessages,
+              interviewerId: interviewerId,
+              sessionId: Cookies.get('guest_session_id'),
+            }),
+          });
+
+          if (!saveResponse.ok) {
+            throw new Error('Failed to save interview');
+          }
+
+          const saveResult = await saveResponse.json();
+          console.log('Interview saved to Firestore:', saveResult.interviewId);
+
+          // 保存成功後、結果ページへ遷移（IDをURLパラメータとして渡す）
+          setTimeout(() => {
+            router.push(`/result?id=${saveResult.interviewId}`);
+          }, 2000);
+        } catch (error) {
+          console.error('Error saving interview:', error);
+          alert('インタビューの保存に失敗しました。もう一度お試しください。');
+        }
       }
     } catch (error) {
       console.error('Error sending message:', error);

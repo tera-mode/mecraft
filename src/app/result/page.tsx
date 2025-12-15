@@ -1,42 +1,61 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
-import { useAuth } from '@/contexts/AuthContext';
-import { FixedUserData } from '@/types';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { FixedUserData, DynamicData, InterviewData } from '@/types';
 
-export default function Result() {
+function ResultContent() {
   const router = useRouter();
-  const { user } = useAuth();
-  const [interviewData, setInterviewData] = useState<Partial<FixedUserData> | null>(null);
+  const searchParams = useSearchParams();
+  const interviewId = searchParams.get('id');
+
+  const [interviewData, setInterviewData] = useState<Partial<InterviewData> | null>(null);
   const [article, setArticle] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    // Cookieからインタビューデータを取得
-    const dataStr = Cookies.get('interview_data');
-    if (!dataStr) {
+    console.log('Result page loaded with ID:', interviewId);
+
+    if (!interviewId) {
+      console.error('No interview ID provided, redirecting to home');
       router.push('/');
       return;
     }
 
-    try {
-      const data = JSON.parse(dataStr);
-      setInterviewData(data);
-      generateArticle(data);
+    // FirestoreからインタビューデータをIDで取得
+    loadInterviewData(interviewId);
+  }, [router, interviewId]);
 
-      // ログインユーザーの場合はFirestoreに保存
-      if (user) {
-        saveToFirestore(data);
+  const loadInterviewData = async (id: string) => {
+    try {
+      console.log('Loading interview data from Firestore:', id);
+
+      const response = await fetch(`/api/get-interview?id=${id}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to load interview data');
+      }
+
+      const result = await response.json();
+      console.log('Interview data loaded:', result);
+
+      setInterviewData(result.data);
+
+      // 記事生成
+      if (result.data.fixed) {
+        console.log('Generating article with fixed data');
+        generateArticle(result.data.fixed);
+      } else {
+        console.error('No fixed data found in interview data');
+        setIsLoading(false);
       }
     } catch (error) {
-      console.error('Error parsing interview data:', error);
+      console.error('Error loading interview data:', error);
+      alert('インタビューデータの読み込みに失敗しました。');
       router.push('/');
     }
-  }, [router, user]);
+  };
 
   const generateArticle = async (data: Partial<FixedUserData>) => {
     setIsLoading(true);
@@ -63,44 +82,6 @@ export default function Result() {
     }
   };
 
-  const saveToFirestore = async (data: Partial<FixedUserData>) => {
-    if (!user) return;
-
-    try {
-      const messagesStr = Cookies.get('interview_messages');
-      const interviewerIdStr = Cookies.get('selected_interviewer');
-      const sessionIdStr = Cookies.get('guest_session_id');
-
-      if (!messagesStr || !interviewerIdStr || !sessionIdStr) {
-        console.error('Missing data for Firestore save');
-        return;
-      }
-
-      const messages = JSON.parse(messagesStr);
-
-      const response = await fetch('/api/save-interview', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.uid,
-          interviewData: data,
-          messages,
-          interviewerId: interviewerIdStr,
-          sessionId: sessionIdStr,
-        }),
-      });
-
-      if (response.ok) {
-        setIsSaved(true);
-        console.log('インタビューデータをFirestoreに保存しました');
-      }
-    } catch (error) {
-      console.error('Error saving to Firestore:', error);
-    }
-  };
-
   const handleCopyArticle = async () => {
     try {
       await navigator.clipboard.writeText(article);
@@ -112,8 +93,7 @@ export default function Result() {
   };
 
   const handleStartNew = () => {
-    // Cookieをクリアして新しいインタビューを開始
-    Cookies.remove('interview_data');
+    // 新しいインタビューを開始
     router.push('/');
   };
 
@@ -155,35 +135,61 @@ export default function Result() {
             <div className="grid gap-3 md:grid-cols-2">
               <div>
                 <span className="font-semibold text-gray-700">名前:</span>{' '}
-                {interviewData.name}
+                {interviewData.fixed?.name}
               </div>
               <div>
                 <span className="font-semibold text-gray-700">ニックネーム:</span>{' '}
-                {interviewData.nickname}
+                {interviewData.fixed?.nickname}
               </div>
               <div>
                 <span className="font-semibold text-gray-700">性別:</span>{' '}
-                {interviewData.gender}
+                {interviewData.fixed?.gender}
               </div>
               <div>
                 <span className="font-semibold text-gray-700">年齢:</span>{' '}
-                {interviewData.age}歳
+                {interviewData.fixed?.age}歳
               </div>
               <div>
                 <span className="font-semibold text-gray-700">居住地:</span>{' '}
-                {interviewData.location}
+                {interviewData.fixed?.location}
               </div>
               <div>
                 <span className="font-semibold text-gray-700">職業:</span>{' '}
-                {interviewData.occupation}
+                {interviewData.fixed?.occupation}
               </div>
             </div>
-            {interviewData.occupationDetail && (
+            {interviewData.fixed?.occupationDetail && (
               <div className="mt-3">
                 <span className="font-semibold text-gray-700">職業詳細:</span>{' '}
-                {interviewData.occupationDetail}
+                {interviewData.fixed.occupationDetail}
               </div>
             )}
+
+            {/* 深掘り情報（Phase 2-1で追加） */}
+            {interviewData.dynamic &&
+              Object.keys(interviewData.dynamic).length > 0 && (
+                <>
+                  <hr className="my-6 border-gray-200" />
+                  <h3 className="mb-3 text-xl font-semibold text-gray-800">
+                    深掘り情報
+                  </h3>
+                  <div className="space-y-4">
+                    {Object.entries(interviewData.dynamic).map(
+                      ([key, item]) => (
+                        <div key={key} className="rounded-lg bg-purple-50 p-4">
+                          <p className="mb-1 text-xs font-semibold text-purple-600">
+                            {item.category}
+                          </p>
+                          <p className="mb-2 font-semibold text-gray-800">
+                            Q: {item.question}
+                          </p>
+                          <p className="text-gray-700">A: {item.answer}</p>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
           </div>
         )}
 
@@ -226,5 +232,22 @@ export default function Result() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function Result() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-purple-50 to-white">
+        <div className="text-center">
+          <div className="mb-4 flex justify-center">
+            <div className="h-16 w-16 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div>
+          </div>
+          <p className="text-xl font-semibold text-gray-700">読み込み中...</p>
+        </div>
+      </div>
+    }>
+      <ResultContent />
+    </Suspense>
   );
 }
