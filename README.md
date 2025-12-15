@@ -1,36 +1,402 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# あなたのインタビュワー
 
-## Getting Started
+AIインタビュワーがユーザーを有名人のようにインタビューし、魅力を引き出して「インタビュー記事」や「各種プロフィール文」を生成するサービス
 
-First, run the development server:
+## プロジェクト概要
+
+| 項目 | 内容 |
+|------|------|
+| サービス名 | あなたのインタビュワー |
+| ドメイン | your-interviewer.jp |
+| コンセプト | AIインタビュワーがユーザーを有名人のようにインタビューし、魅力を引き出して「インタビュー記事」や「各種プロフィール文」を生成 |
+
+## 技術スタック
+
+| カテゴリ | 技術 |
+|----------|------|
+| フレームワーク | Next.js 16 (App Router) |
+| 言語 | TypeScript |
+| スタイリング | Tailwind CSS 4 |
+| データベース | Firebase Firestore |
+| ストレージ | Firebase Storage |
+| 認証 | Firebase Auth (Google, Email/Password) |
+| ホスティング | Vercel |
+| AI | Gemini API (gemini-2.0-flash-exp) |
+| メール送信 | Brevo (Phase 2以降) |
+
+## 環境構築
+
+### 1. 依存関係のインストール
+
+```bash
+npm install
+```
+
+### 2. 環境変数の設定
+
+`.env.local` ファイルを作成し、以下の環境変数を設定：
+
+```env
+# Firebase Client
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-interviewer.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-interviewer
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-interviewer.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
+
+# Firebase Admin (サーバーサイドのみ)
+FIREBASE_ADMIN_PROJECT_ID=your-interviewer
+FIREBASE_ADMIN_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-interviewer.iam.gserviceaccount.com
+FIREBASE_ADMIN_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+
+# Gemini API
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+### 3. Firebase Console設定
+
+#### 認証設定
+1. [Firebase Console](https://console.firebase.google.com/) にアクセス
+2. プロジェクト「your-interviewer」を選択
+3. **Authentication** → **Sign-in method** で以下を有効化：
+   - Google認証
+   - Email/Password認証
+
+#### Firestore設定
+1. **Firestore Database** を作成
+2. セキュリティルールを設定（本番環境では適切なルールに変更）
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ユーザーは自分のデータのみ読み書き可能
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // インタビューは作成者のみ読み書き可能
+    match /interviews/{interviewId} {
+      allow read, write: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null;
+    }
+  }
+}
+```
+
+### 4. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000 でアクセス
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. ビルド
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+## ディレクトリ構造
 
-To learn more about Next.js, take a look at the following resources:
+```
+your-interviewer/
+├── public/
+│   └── image/                    # 画像ファイル
+│       ├── lady-interviewer.png
+│       ├── icon_lady-interviewer.png
+│       ├── man-interviewer.png
+│       └── icon_man-interviewer.png
+├── src/
+│   ├── app/                      # Next.js App Router
+│   │   ├── api/                  # APIルート
+│   │   │   ├── chat/             # チャット処理
+│   │   │   ├── generate-article/ # 記事生成
+│   │   │   ├── save-interview/   # インタビュー保存
+│   │   │   └── get-interviews/   # インタビュー取得
+│   │   ├── login/                # ログインページ
+│   │   ├── select-interviewer/   # インタビュワー選択
+│   │   ├── interview/            # インタビューページ
+│   │   ├── result/               # 結果ページ
+│   │   ├── mypage/               # マイページ
+│   │   ├── page.tsx              # LPページ
+│   │   ├── layout.tsx            # ルートレイアウト
+│   │   └── providers.tsx         # プロバイダー設定
+│   ├── contexts/                 # React Context
+│   │   └── AuthContext.tsx       # 認証コンテキスト
+│   ├── lib/                      # ライブラリ・ユーティリティ
+│   │   ├── firebase/
+│   │   │   ├── config.ts         # Firebase Client設定
+│   │   │   └── admin.ts          # Firebase Admin設定
+│   │   ├── gemini.ts             # Gemini API設定
+│   │   └── interviewers.ts       # インタビュワー設定
+│   └── types/                    # TypeScript型定義
+│       └── index.ts
+├── .env.local                    # 環境変数（gitignoreに含む）
+├── .gitignore
+├── package.json
+└── README.md
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ユーザーフロー
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+[1] LP表示
+    ├─ ゲスト利用 → Cookie でセッション管理
+    └─ ログイン利用 → Firebase Auth (Google / Email+Password)
+    ↓
+[2] インタビュワー選択
+    ├─ 女性インタビュワー（あかり）
+    └─ 男性インタビュワー（けんと）
+    ↓
+[3] AIチャットインタビュー
+    ├─ 基本情報の収集（固定key: 名前、年齢、職業など）
+    └─ 7つの質問（5〜10ターンで終了）
+    ↓
+[4] アウトプット生成
+    ├─ インタビュー記事（800〜1500字）
+    └─ （Phase 2: 自己PR、マッチングプロフィール、SNSプロフィール）
+    ↓
+[5] 結果表示
+    ├─ 記事のコピー機能
+    └─ ログインユーザー: Firestoreに自動保存
+    ↓
+[6] マイページ（ログインユーザーのみ）
+    └─ 過去のインタビュー一覧
+```
 
-## Deploy on Vercel
+## データ構造
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 固定key（全ユーザー共通の基本情報）
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```typescript
+interface FixedUserData {
+  name: string;              // 氏名
+  nickname: string;          // ニックネーム
+  gender: '男性' | '女性' | 'その他';
+  age: number;               // 年齢
+  location: string;          // 居住地（都道府県）
+  occupation: OccupationCategory;  // 職業カテゴリ
+  occupationDetail: string;  // 職業詳細
+  selectedInterviewer: InterviewerId;
+}
+```
+
+**職業カテゴリ**: 会社員、経営者、自営業、公務員、フリーランス、主婦/主夫、学生（小学生〜大学院生）、無職、その他
+
+### Firestoreデータ構造
+
+```
+/users/{userId}
+  - uid: string
+  - email?: string
+  - displayName?: string
+  - createdAt: Timestamp
+  - lastLoginAt: Timestamp
+
+/interviews/{interviewId}
+  - userId: string
+  - interviewerId: 'female_01' | 'male_01'
+  - messages: ChatMessage[]
+  - data: {
+      fixed: FixedUserData
+      dynamic: DynamicData
+      createdAt: Timestamp
+      updatedAt: Timestamp
+    }
+  - status: 'in_progress' | 'completed'
+  - createdAt: Timestamp
+  - updatedAt: Timestamp
+```
+
+## API仕様
+
+### POST /api/chat
+
+チャット処理（インタビュー進行）
+
+**Request:**
+```json
+{
+  "messages": ChatMessage[],
+  "interviewerId": "female_01" | "male_01"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "string",
+  "isCompleted": boolean,
+  "interviewData": FixedUserData | null
+}
+```
+
+### POST /api/generate-article
+
+インタビュー記事生成
+
+**Request:**
+```json
+{
+  "interviewData": FixedUserData
+}
+```
+
+**Response:**
+```json
+{
+  "article": "string"
+}
+```
+
+### POST /api/save-interview
+
+インタビューをFirestoreに保存（ログインユーザーのみ）
+
+**Request:**
+```json
+{
+  "userId": "string",
+  "interviewData": FixedUserData,
+  "messages": ChatMessage[],
+  "interviewerId": "female_01" | "male_01",
+  "sessionId": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "success": boolean,
+  "interviewId": "string"
+}
+```
+
+### GET /api/get-interviews?userId={userId}
+
+ユーザーのインタビュー一覧を取得
+
+**Response:**
+```json
+{
+  "interviews": Interview[]
+}
+```
+
+## インタビュワー設定
+
+| ID | 名前 | 性別 | キャラクター | 口調 |
+|----|------|------|-------------|------|
+| female_01 | あかり | 女性 | かわいい・親しみやすい | 丁寧だけどフレンドリー |
+| male_01 | けんと | 男性 | かっこいい・知的 | 落ち着いた敬語 |
+
+- 画像ファイル: `/public/image/` に保存
+- アイコン: 丸抜き（48px × 48px）
+- 選択画面: 矩形（600px高さ）
+
+## 開発ルール
+
+### 作業方針
+1. **日本語でのコミュニケーション**: やり取りは日本語で行う
+2. **段階的な実装**: Phase 1 → Phase 2 → Phase 3 の順で実装
+3. **既存コード参考**: ふるソナ（`Documents/furusona`）のコード構造を流用
+4. **デプロイ禁止**: GitHub Push / Vercel デプロイは指示があるまで行わない
+
+### コーディング規約
+- TypeScriptの型を明示的に定義
+- コンポーネントは'use client'ディレクティブを適切に使用
+- APIルートはエラーハンドリングを徹底
+- 環境変数は`.env.local`で管理（`.gitignore`に含める）
+
+### 機密情報管理
+- APIキー、秘密鍵は`.env.local`のみに記載
+- 公開リポジトリにコミットしない
+- Firebaseサービスアカウント鍵は絶対に公開しない
+
+## 実装済み機能（Phase 1 完了）
+
+### ✅ 完成
+- [x] LPページ
+- [x] ログイン機能（Google、Email/Password）
+- [x] インタビュワー選択ページ
+- [x] インタビューページ（チャットUI）
+- [x] 結果ページ（インタビュー記事生成）
+- [x] Firestore連携（ログインユーザーのデータ保存）
+- [x] マイページ（過去のインタビュー一覧）
+- [x] 認証コンテキスト（AuthContext）
+
+### 📋 Phase 2（予定）
+- [ ] 深掘りインタビュー（変動key収集）
+- [ ] 4種類のアウトプット生成
+  - [ ] 自己PR文（300〜400字）
+  - [ ] マッチングアプリ用プロフィール（200〜300字）
+  - [ ] SNSプロフィール（50〜100字）
+- [ ] インタビュー詳細ページ（/mypage/interview/[id]）
+- [ ] シェア機能
+- [ ] LINE認証
+
+### 📋 Phase 3（予定）
+- [ ] メール送信機能（Brevo）
+- [ ] 定期実行（GitHub Actions）
+- [ ] プロフィール編集機能
+- [ ] インタビュー再編集機能
+
+## トラブルシューティング
+
+### ビルドエラー
+
+```bash
+npm run build
+```
+
+エラーが出た場合、TypeScriptの型エラーやインポートエラーを確認
+
+### Firebase接続エラー
+
+1. `.env.local`の環境変数を確認
+2. Firebase Consoleで認証方法が有効化されているか確認
+3. Firestoreのセキュリティルールを確認
+
+### Gemini APIエラー
+
+- `GEMINI_API_KEY`が正しく設定されているか確認
+- APIキーの有効期限を確認
+- レート制限に達していないか確認
+
+### 開発サーバーエラー
+
+```bash
+# node_modulesを削除して再インストール
+rm -rf node_modules package-lock.json
+npm install
+npm run dev
+```
+
+## よくある質問
+
+### Q: ゲストユーザーのデータはどこに保存される？
+A: Cookieに保存されます。Cookieを削除するとデータが消失します。
+
+### Q: ログインユーザーのデータは？
+A: Firestoreに永続的に保存され、マイページでいつでも確認できます。
+
+### Q: インタビューは何回まで実施できる？
+A: 制限なし。ログインユーザーは全て保存され、マイページで確認可能。
+
+### Q: 記事の再生成はできる？
+A: 現在（Phase 1）は不可。Phase 3で再編集機能を実装予定。
+
+## ライセンス
+
+非公開プロジェクト
+
+## 参考リンク
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Firebase Documentation](https://firebase.google.com/docs)
+- [Gemini API Documentation](https://ai.google.dev/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
