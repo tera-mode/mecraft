@@ -13,10 +13,6 @@ export default function UserHeader({ showHomeButton = true, userNickname }: User
   const { user } = useAuth();
 
   const handleMyPage = () => {
-    if (user?.isAnonymous) {
-      alert('マイページはログインユーザーのみアクセスできます。\nログインすることで、インタビュー履歴を永続的に保存できます。');
-      return;
-    }
     router.push('/mypage');
   };
 
@@ -55,22 +51,12 @@ export default function UserHeader({ showHomeButton = true, userNickname }: User
               HOME
             </button>
           )}
-          {!user.isAnonymous && (
-            <button
-              onClick={handleMyPage}
-              className="rounded-full bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-purple-700"
-            >
-              マイページ
-            </button>
-          )}
-          {user.isAnonymous && (
-            <button
-              onClick={() => router.push('/login')}
-              className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-            >
-              ログインして保存
-            </button>
-          )}
+          <button
+            onClick={handleMyPage}
+            className="rounded-full bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-purple-700"
+          >
+            マイページ
+          </button>
         </div>
       </div>
     </div>
