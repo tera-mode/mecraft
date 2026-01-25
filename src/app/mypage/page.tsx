@@ -32,11 +32,12 @@ export default function MyPage() {
   const { user, loading, signOut } = useAuth();
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [isLoadingInterviews, setIsLoadingInterviews] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const isGuest = user?.isAnonymous ?? false;
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || isLoggingOut) return;
 
     if (!user) {
       // ログインしていない場合はログインページへ
@@ -46,7 +47,7 @@ export default function MyPage() {
 
     // ゲストユーザーも含めてインタビューを取得
     fetchInterviews();
-  }, [user, loading, router]);
+  }, [user, loading, router, isLoggingOut]);
 
   const fetchInterviews = async () => {
     if (!user) return;
@@ -78,11 +79,13 @@ export default function MyPage() {
       return;
     }
     try {
+      setIsLoggingOut(true);
       await signOut();
       router.push('/');
     } catch (error) {
       console.error('ログアウトエラー:', error);
       alert('ログアウトに失敗しました。もう一度お試しください。');
+      setIsLoggingOut(false);
     }
   };
 
