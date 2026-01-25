@@ -21,7 +21,6 @@ export default function Interview() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [interviewerName, setInterviewerName] = useState<string>('');
-  const [isNamingPhase, setIsNamingPhase] = useState(true);
   const [userNickname, setUserNickname] = useState<string>(''); // ユーザーの呼び名
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -34,37 +33,25 @@ export default function Interview() {
     // セッションとインタビュワーを確認
     const guestSessionId = Cookies.get('guest_session_id');
     const selectedInterviewer = Cookies.get('selected_interviewer') as InterviewerId;
+    const savedName = Cookies.get('interviewer_name');
 
-    if (!guestSessionId || !selectedInterviewer) {
-      router.push('/');
+    if (!guestSessionId || !selectedInterviewer || !savedName) {
+      // 必要な情報がない場合はインタビュワー選択ページへ
+      router.push('/select-interviewer');
       return;
     }
 
     console.log('Interview initialized. User:', user ? user.uid : 'not yet loaded');
 
     setInterviewerId(selectedInterviewer);
+    setInterviewerName(savedName);
 
-    // 保存されているインタビュワー名をチェック
-    const savedName = Cookies.get('interviewer_name');
-
-    let initialMessage: ChatMessage;
-    if (savedName) {
-      // すでに名前がある場合
-      setInterviewerName(savedName);
-      setIsNamingPhase(false);
-      initialMessage = {
-        role: 'assistant',
-        content: `こんにちは！私は${savedName}です。今日はあなたのことをたくさん教えてください。まず、あなたのことをなんて呼んだらいいですか？`,
-        timestamp: new Date(),
-      };
-    } else {
-      // 初回の場合は名前をつけてもらう
-      initialMessage = {
-        role: 'assistant',
-        content: 'こんにちは！まず、私に名前を付けてください。どんな名前で呼んでほしいですか？',
-        timestamp: new Date(),
-      };
-    }
+    // 最初のメッセージ（ユーザーの呼び名を聞く）
+    const initialMessage: ChatMessage = {
+      role: 'assistant',
+      content: `こんにちは！私は${savedName}です。今日はあなたのことをたくさん教えてください。まず、あなたのことをなんて呼んだらいいですか？`,
+      timestamp: new Date(),
+    };
 
     setMessages([initialMessage]);
   }, [router, user]);
@@ -94,44 +81,6 @@ export default function Interview() {
     const currentInput = inputText;
     setInputText('');
     setIsLoading(true);
-
-    // 名前付けフェーズの処理
-    if (isNamingPhase) {
-      const name = currentInput.trim();
-      setInterviewerName(name);
-      setIsNamingPhase(false);
-
-      // Cookieに保存（365日）
-      Cookies.set('interviewer_name', name, { expires: 365, path: '/' });
-
-      // Firestoreにも保存（ログインユーザーの場合）
-      if (user && !user.isAnonymous) {
-        try {
-          await fetch('/api/save-interviewer-name', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              userId: user.uid,
-              interviewerName: name,
-            }),
-          });
-        } catch (error) {
-          console.error('Failed to save interviewer name:', error);
-        }
-      }
-
-      const responseMessage: ChatMessage = {
-        role: 'assistant',
-        content: `ありがとうございます！これから私は${name}としてインタビューさせていただきます。まず、あなたのことをなんて呼んだらいいですか？`,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, responseMessage]);
-      setIsLoading(false);
-      return;
-    }
 
     try {
       // APIにメッセージを送信
@@ -165,8 +114,8 @@ export default function Interview() {
         setUserNickname(data.extractedNickname);
       }
 
-      // 特徴抽出（名前付けフェーズ以降、完了前のみ）
-      if (!isNamingPhase && !data.isCompleted) {
+      // 特徴抽出（完了前のみ）
+      if (!data.isCompleted) {
         extractTraits(
           currentInput,
           data.message,
