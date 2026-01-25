@@ -8,6 +8,9 @@ import { getInterviewer } from '@/lib/interviewers';
 import { ChatMessage, InterviewerId } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import UserHeader from '@/components/UserHeader';
+import { TraitCardList, TraitCardCollapsible } from '@/components/interview';
+import { useTraitExtraction } from '@/hooks/useTraitExtraction';
+import { useIsDesktop } from '@/hooks/useMediaQuery';
 
 export default function Interview() {
   const router = useRouter();
@@ -19,7 +22,11 @@ export default function Interview() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [interviewerName, setInterviewerName] = useState<string>('');
   const [isNamingPhase, setIsNamingPhase] = useState(true);
+  const [userNickname, setUserNickname] = useState<string>(''); // ユーザーの呼び名
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const isDesktop = useIsDesktop();
+  const { traits, newTraitIds, updatedTraitIds, isExtracting, extractTraits } = useTraitExtraction();
 
   const interviewer = interviewerId ? getInterviewer(interviewerId) : null;
 
@@ -47,7 +54,7 @@ export default function Interview() {
       setIsNamingPhase(false);
       initialMessage = {
         role: 'assistant',
-        content: `こんにちは！私は${savedName}です。今日はあなたのことをたくさん教えてください。まず、お名前を教えていただけますか？`,
+        content: `こんにちは！私は${savedName}です。今日はあなたのことをたくさん教えてください。まず、あなたのことをなんて呼んだらいいですか？`,
         timestamp: new Date(),
       };
     } else {
@@ -66,6 +73,13 @@ export default function Interview() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // ローディング完了後に入力欄にフォーカス
+  useEffect(() => {
+    if (!isLoading && !isCompleted && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isLoading, isCompleted]);
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || isLoading || !interviewerId) return;
@@ -110,7 +124,7 @@ export default function Interview() {
 
       const responseMessage: ChatMessage = {
         role: 'assistant',
-        content: `ありがとうございます！これから私は${name}としてインタビューさせていただきます。それでは、あなたのお名前を教えていただけますか？`,
+        content: `ありがとうございます！これから私は${name}としてインタビューさせていただきます。まず、あなたのことをなんて呼んだらいいですか？`,
         timestamp: new Date(),
       };
 
@@ -146,6 +160,20 @@ export default function Interview() {
 
       setMessages((prev) => [...prev, assistantMessage]);
 
+      // ユーザーの呼び名が抽出されたら保存
+      if (data.extractedNickname && !userNickname) {
+        setUserNickname(data.extractedNickname);
+      }
+
+      // 特徴抽出（名前付けフェーズ以降、完了前のみ）
+      if (!isNamingPhase && !data.isCompleted) {
+        extractTraits(
+          currentInput,
+          data.message,
+          messages.length + 1 // 現在のメッセージインデックス
+        );
+      }
+
       // インタビュー完了チェック
       if (data.isCompleted) {
         setIsCompleted(true);
@@ -156,13 +184,8 @@ export default function Interview() {
         // interviewDataの構造を拡張（fixed + dynamic）
         const interviewDataToSave = {
           fixed: {
-            name: data.interviewData.name,
             nickname: data.interviewData.nickname,
-            gender: data.interviewData.gender,
-            age: data.interviewData.age,
-            location: data.interviewData.location,
             occupation: data.interviewData.occupation,
-            occupationDetail: data.interviewData.occupationDetail,
             selectedInterviewer: interviewerId,
           },
           dynamic: data.interviewData.dynamic || {}, // DynamicDataを含める
@@ -192,6 +215,25 @@ export default function Interview() {
 
           const saveResult = await saveResponse.json();
           console.log('Interview saved to Firestore:', saveResult.interviewId);
+
+          // 特徴カードを保存
+          if (traits.length > 0) {
+            try {
+              await fetch('/api/save-traits', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  interviewId: saveResult.interviewId,
+                  traits: traits,
+                }),
+              });
+              console.log('Traits saved to Firestore');
+            } catch (traitError) {
+              console.error('Error saving traits:', traitError);
+            }
+          }
 
           // 保存成功後、結果ページへ遷移（IDをURLパラメータとして渡す）
           setTimeout(() => {
@@ -233,7 +275,7 @@ export default function Interview() {
   return (
     <div className="flex h-screen flex-col bg-gradient-to-b from-purple-50 to-white">
       {/* ユーザーヘッダー */}
-      <UserHeader showHomeButton={false} />
+      <UserHeader showHomeButton={false} userNickname={userNickname} />
 
       {/* ステータスバー */}
       {isCompleted && (
@@ -246,9 +288,21 @@ export default function Interview() {
         </div>
       )}
 
-      {/* メッセージエリア */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
-        <div className="mx-auto max-w-4xl space-y-4">
+      {/* SP版: 折りたたみパネル */}
+      {!isDesktop && (
+        <TraitCardCollapsible
+          traits={traits}
+          newTraitIds={newTraitIds}
+          updatedTraitIds={updatedTraitIds}
+          isLoading={isExtracting}
+        />
+      )}
+
+      {/* メインコンテンツ（PC版は横並び） */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* メッセージエリア */}
+        <div className="flex-1 overflow-y-auto px-4 py-6">
+          <div className="mx-auto max-w-4xl space-y-4">
           {messages.map((message, index) => (
             <div
               key={index}
@@ -305,13 +359,25 @@ export default function Interview() {
             </div>
           )}
           <div ref={messagesEndRef} />
+          </div>
         </div>
+
+        {/* PC版: サイドパネル */}
+        {isDesktop && (
+          <TraitCardList
+            traits={traits}
+            newTraitIds={newTraitIds}
+            updatedTraitIds={updatedTraitIds}
+            isLoading={isExtracting}
+          />
+        )}
       </div>
 
       {/* 入力エリア */}
       <div className="border-t bg-white px-4 py-4 shadow-lg">
         <div className="mx-auto flex max-w-4xl gap-2">
           <input
+            ref={inputRef}
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}

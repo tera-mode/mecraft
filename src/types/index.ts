@@ -31,15 +31,17 @@ export interface Interviewer {
 }
 
 // 固定key（全ユーザー共通の基本情報）
+// 簡素化版: nickname（呼び名）とoccupation（職業）のみ必須
 export interface FixedUserData {
-  name: string;
-  nickname: string;
-  gender: Gender;
-  age: number;
-  location: string;
-  occupation: OccupationCategory;
-  occupationDetail: string;
+  nickname: string; // 呼び名（AIが抽出した適切な呼び方）
+  occupation: string; // 職業（仕事/学生など）
   selectedInterviewer: InterviewerId;
+  // 以下は後で別フォームで取得（現在は未使用）
+  name?: string;
+  gender?: Gender;
+  age?: number;
+  location?: string;
+  occupationDetail?: string;
 }
 
 // 変動key（インタビュー中に収集される情報）
@@ -108,3 +110,6 @@ export interface GuestSession {
   createdAt: Date;
   expiresAt: Date;
 }
+
+// 特徴カード関連の型をエクスポート
+export * from './trait';

@@ -5,9 +5,10 @@ import { useAuth } from '@/contexts/AuthContext';
 
 interface UserHeaderProps {
   showHomeButton?: boolean;
+  userNickname?: string; // ユーザーの呼び名
 }
 
-export default function UserHeader({ showHomeButton = true }: UserHeaderProps) {
+export default function UserHeader({ showHomeButton = true, userNickname }: UserHeaderProps) {
   const router = useRouter();
   const { user } = useAuth();
 
@@ -29,14 +30,17 @@ export default function UserHeader({ showHomeButton = true }: UserHeaderProps) {
         {/* ユーザー情報 */}
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-lg">
-            {user.isAnonymous ? '👤' : '👨‍💼'}
+            {userNickname ? '😊' : user.isAnonymous ? '👤' : '👨‍💼'}
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">
-              {user.isAnonymous ? 'ゲストユーザー' : user.email}
+              {userNickname ? `${userNickname}さん` : user.isAnonymous ? 'ゲストユーザー' : user.email}
             </p>
-            {user.isAnonymous && (
+            {!userNickname && user.isAnonymous && (
               <p className="text-xs text-gray-500">一時的なセッション</p>
+            )}
+            {userNickname && (
+              <p className="text-xs text-gray-500">インタビュー中</p>
             )}
           </div>
         </div>
