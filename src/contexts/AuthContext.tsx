@@ -13,6 +13,7 @@ import {
   signInAnonymously,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
+import Cookies from 'js-cookie';
 
 interface AuthContextType {
   user: User | null;
@@ -99,6 +100,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
+      // セッション関連のCookieをクリア
+      Cookies.remove('guest_session_id', { path: '/' });
+      Cookies.remove('selected_interviewer', { path: '/' });
+      Cookies.remove('interviewer_name', { path: '/' });
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;
