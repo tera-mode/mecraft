@@ -22,6 +22,7 @@ interface AuthContextType {
   userProfile: UserProfile | null;
   userInterviewer: UserInterviewer | null;
   isOnboardingRequired: boolean;
+  isAdmin: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, displayName: string) => Promise<void>;
@@ -38,6 +39,7 @@ const AuthContext = createContext<AuthContextType>({
   userProfile: null,
   userInterviewer: null,
   isOnboardingRequired: false,
+  isAdmin: false,
   signInWithGoogle: async () => {},
   signInWithEmail: async () => {},
   signUpWithEmail: async () => {},
@@ -61,6 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userInterviewer, setUserInterviewer] = useState<UserInterviewer | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // オンボーディングが必要かどうか（非匿名ユーザーでプロフィール未完了）
   const isOnboardingRequired = !!(
@@ -94,6 +97,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (data.interviewer) {
           setUserInterviewer(data.interviewer);
         }
+        // 管理者フラグをサーバーから取得（セキュア）
+        setIsAdmin(data.isAdmin || false);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -173,6 +178,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // ユーザーデータをクリア
       setUserProfile(null);
       setUserInterviewer(null);
+      setIsAdmin(false);
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;
@@ -243,6 +249,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     userProfile,
     userInterviewer,
     isOnboardingRequired,
+    isAdmin,
     signInWithGoogle,
     signInWithEmail,
     signUpWithEmail,

@@ -37,6 +37,14 @@ export interface Interviewer {
   tone: string;
   avatarUrl?: string;
   description: string;
+  ageImage?: string; // 年齢イメージ（例: "28歳"）
+  speechPatterns?: {
+    basic: string[];
+    surprise: string[];
+    empathy: string[];
+    admiration: string[];
+    curiosity: string[];
+  };
 }
 
 // 固定key（全ユーザー共通の基本情報）

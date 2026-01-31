@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function SelectModePage() {
   const router = useRouter();
-  const { user, loading, isOnboardingRequired } = useAuth();
+  const { user, loading, isOnboardingRequired, userInterviewer } = useAuth();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -34,8 +34,19 @@ export default function SelectModePage() {
     Cookies.set('interview_mode', mode.id, { expires: 1, path: '/' });
 
     // すでにインタビュワーが選択されている場合は直接インタビューページへ
-    const selectedInterviewer = Cookies.get('selected_interviewer');
-    if (selectedInterviewer && Cookies.get('interviewer_name')) {
+    // Cookieまたはユーザーデータ（Firestore）からチェック
+    const selectedInterviewerCookie = Cookies.get('selected_interviewer');
+    const interviewerNameCookie = Cookies.get('interviewer_name');
+
+    const hasInterviewerInCookie = selectedInterviewerCookie && interviewerNameCookie;
+    const hasInterviewerInUserData = userInterviewer?.id && userInterviewer?.customName;
+
+    if (hasInterviewerInCookie || hasInterviewerInUserData) {
+      // ユーザーデータがある場合はCookieにも同期
+      if (hasInterviewerInUserData && !hasInterviewerInCookie) {
+        Cookies.set('selected_interviewer', userInterviewer.id, { expires: 365, path: '/' });
+        Cookies.set('interviewer_name', userInterviewer.customName!, { expires: 365, path: '/' });
+      }
       router.push(`/interview/${mode.id}`);
     } else {
       router.push('/interview/select-interviewer');

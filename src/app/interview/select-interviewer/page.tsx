@@ -11,7 +11,7 @@ import UserHeader from '@/components/UserHeader';
 
 export default function SelectInterviewer() {
   const router = useRouter();
-  const { user, updateUserInterviewer } = useAuth();
+  const { user, updateUserInterviewer, userInterviewer } = useAuth();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [selectedInterviewer, setSelectedInterviewer] = useState<InterviewerId | null>(null);
   const [interviewerName, setInterviewerName] = useState('');
@@ -33,12 +33,30 @@ export default function SelectInterviewer() {
       setInterviewMode(mode);
     }
 
-    // 保存されているインタビュワー名があれば取得
+    // すでにインタビュワーが決定済みの場合はスキップ
+    const savedInterviewerId = Cookies.get('selected_interviewer');
     const savedName = Cookies.get('interviewer_name');
+
+    // Cookieまたはユーザーデータで決定済みか確認
+    const hasInterviewerInCookie = savedInterviewerId && savedName;
+    const hasInterviewerInUserData = userInterviewer?.id && userInterviewer?.customName;
+
+    if (hasInterviewerInCookie || hasInterviewerInUserData) {
+      // ユーザーデータがある場合はCookieにも同期
+      if (hasInterviewerInUserData && !hasInterviewerInCookie) {
+        Cookies.set('selected_interviewer', userInterviewer.id, { expires: 365, path: '/' });
+        Cookies.set('interviewer_name', userInterviewer.customName!, { expires: 365, path: '/' });
+      }
+      // インタビューページへ直接遷移
+      router.push(`/interview/${mode || 'basic'}`);
+      return;
+    }
+
+    // 保存されているインタビュワー名があれば取得
     if (savedName) {
       setInterviewerName(savedName);
     }
-  }, [router]);
+  }, [router, userInterviewer]);
 
   const handleSelectInterviewer = (interviewerId: InterviewerId) => {
     setSelectedInterviewer(interviewerId);

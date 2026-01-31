@@ -40,11 +40,17 @@ export default function Home() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-hero px-4 py-12">
-      {/* 装飾用グラデーションオーブ */}
-      <div className="gradient-orb gradient-orb-orange absolute -left-32 -top-32 h-96 w-96" />
-      <div className="gradient-orb gradient-orb-yellow absolute -right-32 top-1/4 h-80 w-80" />
-      <div className="gradient-orb gradient-orb-coral absolute -bottom-32 left-1/4 h-72 w-72" />
+    <div
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-12"
+      style={{
+        backgroundImage: 'url(/image/lady-interviewer.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      {/* 背景オーバーレイ */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/50 to-white/70" />
 
       {/* マイページボタン（ログインユーザーのみ） */}
       {user && !user.isAnonymous && (

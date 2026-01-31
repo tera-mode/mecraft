@@ -3,6 +3,9 @@ import { adminDb } from '@/lib/firebase/admin';
 import { UserProfile, UserInterviewer } from '@/types';
 import { verifyAuth } from '@/lib/auth/verifyAuth';
 
+// 管理者メールアドレス（サーバーサイドのみ）
+const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()) || [];
+
 export async function POST(request: NextRequest) {
   try {
     // 認証検証
@@ -86,6 +89,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // 管理者判定（サーバーサイドで安全に判定）
+    const userEmail = authResult.email || '';
+    const isAdmin = ADMIN_EMAILS.includes(userEmail);
+
     const userRef = adminDb.collection('users').doc(userId);
     const userDoc = await userRef.get();
 
@@ -94,6 +101,7 @@ export async function GET(request: NextRequest) {
         success: true,
         profile: null,
         interviewer: null,
+        isAdmin,
       });
     }
 
@@ -103,6 +111,7 @@ export async function GET(request: NextRequest) {
       success: true,
       profile: data?.profile || null,
       interviewer: data?.interviewer || null,
+      isAdmin,
     });
   } catch (error) {
     console.error('Error fetching profile:', error);

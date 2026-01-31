@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { getInterviewer } from '@/lib/interviewers';
-import { getInterviewMode, isEndlessMode } from '@/lib/interviewModes';
+import { getInterviewMode, isEndlessMode, getRandomQuestion } from '@/lib/interviewModes';
 import { ChatMessage, InterviewerId, InterviewMode } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import UserHeader from '@/components/UserHeader';
@@ -58,12 +58,16 @@ export default function InterviewPage() {
     setInterviewerId(selectedInterviewer);
     setInterviewerName(savedName);
 
-    // userProfileがある場合は、深掘り質問から開始
+    // userProfileがある場合は、アイスブレイク質問から開始
     if (userProfile?.nickname && userProfile?.occupation) {
       setUserNickname(userProfile.nickname);
+
+      // 質問バンクからアイスブレイク質問を取得
+      const iceBreakQuestion = getRandomQuestion(mode, 'iceBreak') || '最近ハマってることってありますか？';
+
       const initialMessage: ChatMessage = {
         role: 'assistant',
-        content: `こんにちは、${userProfile.nickname}さん！私は${savedName}です。今日は「${modeConfig.name}」モードで${userProfile.nickname}さんの魅力をたくさん引き出していきますね。早速ですが、${userProfile.occupation}のお仕事について、やりがいを感じる瞬間を教えてください。`,
+        content: `こんにちは、${userProfile.nickname}さん！私は${savedName}です。今日は「${modeConfig.name}」モードで${userProfile.nickname}さんの魅力をたくさん引き出していきますね。\n\n${iceBreakQuestion}`,
         timestamp: new Date(),
       };
       setMessages([initialMessage]);

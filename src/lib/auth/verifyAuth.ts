@@ -4,6 +4,7 @@ import { adminAuth } from '@/lib/firebase/admin';
 export interface AuthResult {
   authenticated: boolean;
   uid: string | null;
+  email?: string | null;
   error?: string;
 }
 
@@ -39,6 +40,7 @@ export async function verifyAuth(request: NextRequest): Promise<AuthResult> {
     return {
       authenticated: true,
       uid: decodedToken.uid,
+      email: decodedToken.email || null,
     };
   } catch (error) {
     console.error('Auth verification error:', error);
