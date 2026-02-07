@@ -61,7 +61,7 @@ export default function SelfImagePage() {
   };
 
   const handleGenerateImage = async () => {
-    if (!user || user.isAnonymous || traitCount < 10) return;
+    if (!user || user.isAnonymous || traitCount < 5) return;
 
     setIsGenerating(true);
     setError('');
@@ -143,7 +143,7 @@ export default function SelfImagePage() {
     );
   }
 
-  const canGenerate = traitCount >= 10;
+  const canGenerate = traitCount >= 5;
 
   return (
     <div className="px-4 py-6">
@@ -160,10 +160,10 @@ export default function SelfImagePage() {
         {!canGenerate && (
           <div className="glass-card mb-6 p-6 text-center">
             <p className="mb-4 text-gray-700">
-              自分画像を生成するには、特徴データが10個以上必要です
+              自分画像を生成するには、特徴データが5個以上必要です
             </p>
             <p className="mb-4 text-2xl font-bold text-sky-600">
-              現在: {traitCount} / 10 個
+              現在: {traitCount} / 5 個
             </p>
             <button
               onClick={() => router.push('/dig/interview/select-mode')}

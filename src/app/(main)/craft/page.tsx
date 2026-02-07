@@ -1,49 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Sparkles, Clock, Palette, MessageSquare } from 'lucide-react';
+import { FileText, Palette, MessageSquare, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTraits } from '@/contexts/TraitsContext';
-import { getEnabledOutputTypes } from '@/lib/outputTypes';
-import { Output } from '@/types';
-import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 import { usePageHeader } from '@/contexts/PageHeaderContext';
 
 export default function CraftPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { traitCount, isLoading: isLoadingTraits } = useTraits();
-  const [recentOutputs, setRecentOutputs] = useState<Output[]>([]);
-  const [isLoadingOutputs, setIsLoadingOutputs] = useState(true);
   usePageHeader({ title: 'つくる' });
-
-  const outputTypes = getEnabledOutputTypes();
-
-  useEffect(() => {
-    if (user && !user.isAnonymous) {
-      fetchRecentOutputs();
-    } else {
-      setIsLoadingOutputs(false);
-    }
-  }, [user]);
-
-  const fetchRecentOutputs = async () => {
-    try {
-      const response = await authenticatedFetch(`/api/outputs?userId=${user?.uid}`);
-      if (!response.ok) throw new Error('Failed to fetch outputs');
-
-      const data = await response.json();
-      const activeOutputs = (data.outputs || [])
-        .filter((o: Output) => o.status !== 'archived')
-        .slice(0, 3);
-      setRecentOutputs(activeOutputs);
-    } catch (error) {
-      console.error('Error fetching outputs:', error);
-    } finally {
-      setIsLoadingOutputs(false);
-    }
-  };
 
   const craftMenuItems = [
     {
@@ -54,7 +21,7 @@ export default function CraftPage() {
       bgGradient: 'from-purple-200 to-pink-200',
       buttonGradient: 'from-purple-500 to-pink-500',
       href: '/craft/self-image',
-      requiresTraits: true,
+      minTraits: 5,
     },
     {
       title: '自分AIと話す',
@@ -64,27 +31,27 @@ export default function CraftPage() {
       bgGradient: 'from-blue-200 to-cyan-200',
       buttonGradient: 'from-blue-500 to-cyan-500',
       href: '/craft/talk-with-self',
-      requiresTraits: true,
+      minTraits: 10,
     },
     {
-      title: 'テキスト生成',
-      description: '特徴を使って自己PRや紹介文を生成',
-      icon: Sparkles,
+      title: '自己PRページ',
+      description: '転職・就活で使える自己PR文を生成',
+      icon: FileText,
       iconColor: 'text-sky-600',
       bgGradient: 'from-sky-200 to-blue-200',
       buttonGradient: 'from-sky-500 to-blue-500',
-      href: '/craft/create',
-      requiresTraits: false,
+      href: '/craft/create?type=self-pr',
+      minTraits: 0,
     },
     {
-      title: 'アウトプット履歴',
-      description: '過去に作成したアウトプットを確認',
-      icon: Clock,
-      iconColor: 'text-amber-600',
-      bgGradient: 'from-amber-200 to-yellow-200',
-      buttonGradient: 'from-amber-500 to-yellow-500',
-      href: '/craft/history',
-      requiresTraits: false,
+      title: 'SNS用プロフィール',
+      description: 'SNSプロフィール欄に使える自己紹介文',
+      icon: FileText,
+      iconColor: 'text-emerald-600',
+      bgGradient: 'from-emerald-200 to-teal-200',
+      buttonGradient: 'from-emerald-500 to-teal-500',
+      href: '/craft/create?type=sns-profile',
+      minTraits: 0,
     },
   ];
 
@@ -160,7 +127,7 @@ export default function CraftPage() {
                 <div className="mb-6 grid grid-cols-2 gap-4">
                   {craftMenuItems.map((item) => {
                     const Icon = item.icon;
-                    const isLocked = item.requiresTraits && traitCount < 10;
+                    const isLocked = item.minTraits > 0 && traitCount < item.minTraits;
 
                     return (
                       <div
@@ -174,7 +141,7 @@ export default function CraftPage() {
                         <p className="mb-3 text-xs text-gray-600 leading-relaxed">{item.description}</p>
                         {isLocked ? (
                           <p className="text-xs text-gray-500">
-                            特徴10個以上必要（{traitCount}/10）
+                            特徴{item.minTraits}個以上必要（{traitCount}/{item.minTraits}）
                           </p>
                         ) : (
                           <button
@@ -189,47 +156,16 @@ export default function CraftPage() {
                   })}
                 </div>
 
-                {/* Recent outputs */}
-                {!isLoadingOutputs && recentOutputs.length > 0 && (
-                  <div className="glass-card p-5">
-                    <div className="mb-4 flex items-center justify-between">
-                      <h2 className="flex items-center gap-2 font-bold text-gray-800">
-                        <Clock size={18} className="text-sky-500" />
-                        最近のアウトプット
-                      </h2>
-                      <button
-                        onClick={() => router.push('/craft/history')}
-                        className="text-sm text-sky-600 underline"
-                      >
-                        すべて見る
-                      </button>
-                    </div>
-                    <div className="space-y-3">
-                      {recentOutputs.map((output) => {
-                        const type = outputTypes.find((t) => t.id === output.type);
-                        const preview =
-                          (output.editedContent || output.content.body).slice(0, 50) + '...';
-
-                        return (
-                          <button
-                            key={output.id}
-                            onClick={() => router.push(`/craft/${output.id}`)}
-                            className="flex w-full items-center gap-3 rounded-xl bg-white/50 p-3 text-left transition-all hover:bg-white/80"
-                          >
-                            <span className="text-xl">{type?.icon || '📄'}</span>
-                            <div className="min-w-0 flex-1">
-                              <div className="text-sm font-semibold text-gray-800">
-                                {type?.name || output.type}
-                              </div>
-                              <div className="truncate text-xs text-gray-500">{preview}</div>
-                            </div>
-                            <span className="text-gray-400">→</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                {/* アウトプット履歴リンク */}
+                <div className="mb-6 text-center">
+                  <button
+                    onClick={() => router.push('/craft/history')}
+                    className="inline-flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-sky-600"
+                  >
+                    アウトプット履歴を見る
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
               </>
             )}
           </>
