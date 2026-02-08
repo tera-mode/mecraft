@@ -66,7 +66,7 @@ export default function MyPage() {
               <p className="mb-2 text-sm font-semibold text-emerald-700">ゲストモードでご利用中</p>
               <p className="mb-3 text-xs text-gray-600">ログインすると特徴データが保存されます。</p>
               <button
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/login?mode=signup')}
                 className="btn-gradient-secondary rounded-xl px-4 py-2 text-sm font-semibold text-white"
               >
                 ログインして保存する

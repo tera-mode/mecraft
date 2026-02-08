@@ -41,10 +41,13 @@ function LoginContent() {
     setIsSigningIn(true);
     setError('');
     try {
-      await signInWithGoogle();
+      const isGuestSignup = user?.isAnonymous && mode === 'signup';
+      await signInWithGoogle(isGuestSignup);
     } catch (error: unknown) {
-      const firebaseError = error as { code?: string };
-      if (firebaseError.code !== 'auth/popup-closed-by-user' && firebaseError.code !== 'auth/cancelled-popup-request') {
+      const firebaseError = error as { code?: string; message?: string };
+      if (firebaseError.code === 'auth/credential-already-in-use' || firebaseError.message === 'このGoogleアカウントは既に登録されています') {
+        setError('このアカウントは既に登録されています。ログインタブをお使いください。');
+      } else if (firebaseError.code !== 'auth/popup-closed-by-user' && firebaseError.code !== 'auth/cancelled-popup-request') {
         console.error('ログインエラー:', error);
         setError('ログインに失敗しました。もう一度お試しください。');
       }
@@ -82,8 +85,8 @@ function LoginContent() {
       }
     } catch (error: any) {
       console.error('認証エラー:', error);
-      if (error.code === 'auth/email-already-in-use') {
-        setError('このメールアドレスは既に使用されています');
+      if (error.code === 'auth/email-already-in-use' || error.code === 'auth/credential-already-in-use') {
+        setError('このメールアドレスは既に使用されています。ログインタブをお使いください。');
       } else if (error.code === 'auth/weak-password') {
         setError('パスワードは6文字以上で設定してください');
       } else if (error.code === 'auth/invalid-email') {
@@ -130,8 +133,9 @@ function LoginContent() {
         {user && user.isAnonymous && (
           <div className="glass w-full rounded-xl p-4 text-left">
             <p className="text-sm text-emerald-700">
-              現在ゲストとしてログインしています。<br />
-              ログインすることで、データを永続的に保存できます。
+              {mode === 'signup'
+                ? '新規登録すると、ゲストで集めた特徴データを引き継げます。'
+                : '既存アカウントにログインすると、ゲスト時のデータは引き継がれません。'}
             </p>
           </div>
         )}

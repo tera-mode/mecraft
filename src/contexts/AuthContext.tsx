@@ -11,6 +11,9 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
   signInAnonymously,
+  linkWithCredential,
+  EmailAuthProvider,
+  linkWithPopup,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
 import Cookies from 'js-cookie';
@@ -23,7 +26,7 @@ interface AuthContextType {
   userInterviewer: UserInterviewer | null;
   isOnboardingRequired: boolean;
   isAdmin: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (linkGuest?: boolean) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, displayName: string, occupation: OccupationCategory) => Promise<void>;
   signInAsGuest: () => Promise<void>;
@@ -123,15 +126,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, [fetchUserData]);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (linkGuest: boolean = false) => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      if (linkGuest && auth.currentUser?.isAnonymous) {
+        await linkWithPopup(auth.currentUser, provider);
+      } else {
+        await signInWithPopup(auth, provider);
+      }
     } catch (error: unknown) {
       const firebaseError = error as { code?: string };
       // ユーザーがポップアップを閉じた場合は無視
       if (firebaseError.code === 'auth/popup-closed-by-user' || firebaseError.code === 'auth/cancelled-popup-request') {
         return;
+      }
+      if (firebaseError.code === 'auth/credential-already-in-use') {
+        throw new Error('このGoogleアカウントは既に登録されています');
       }
       console.error('Error signing in with Google:', error);
       throw error;
@@ -149,7 +159,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUpWithEmail = async (email: string, password: string, displayName: string, occupation: OccupationCategory) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      let userCredential;
+      if (auth.currentUser?.isAnonymous) {
+        // ゲストアカウントをメール/パスワードでリンク（UIDが変わらないのでデータ引き継ぎ）
+        const credential = EmailAuthProvider.credential(email, password);
+        userCredential = await linkWithCredential(auth.currentUser, credential);
+      } else {
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      }
       // ユーザー名をFirebase Authに設定
       if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
