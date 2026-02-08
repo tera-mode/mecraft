@@ -18,17 +18,22 @@ function CreateContent() {
   const [generatedContent, setGeneratedContent] = useState<string>('');
   const [error, setError] = useState('');
 
-  usePageHeader({ title: 'テキスト生成', showBackButton: true, onBack: () => router.push('/craft') });
-
   const outputTypes = getEnabledOutputTypes();
+  const typeParam = searchParams.get('type');
+  const isDirectAccess = !!typeParam;
 
   useEffect(() => {
-    const typeParam = searchParams.get('type');
     if (typeParam) {
       const found = outputTypes.find((t) => t.id === typeParam);
       if (found) setSelectedType(found);
     }
-  }, [searchParams]);
+  }, [typeParam]);
+
+  usePageHeader({
+    title: selectedType?.name || 'テキスト生成',
+    showBackButton: true,
+    onBack: () => router.push('/craft'),
+  });
 
   const handleSelectType = (type: OutputTypeConfig) => {
     setSelectedType(type);
@@ -122,44 +127,13 @@ function CreateContent() {
           </div>
         ) : (
           <>
-            {/* 特徴サマリー */}
-            <div className="glass-card mb-6 p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
-                  蓄積された特徴: <span className="font-bold text-sky-600">{traitCount}個</span>
-                </span>
-              </div>
-            </div>
-
-            {/* アウトプットタイプ選択 */}
-            <div className="mb-6 grid gap-3 md:grid-cols-2">
-              {outputTypes.map((type) => (
-                <button
-                  key={type.id}
-                  onClick={() => handleSelectType(type)}
-                  className={`glass-card flex items-start gap-4 p-4 text-left transition-all ${
-                    selectedType?.id === type.id
-                      ? 'ring-2 ring-sky-400 shadow-lg'
-                      : 'hover:shadow-md'
-                  }`}
-                >
-                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-200 to-blue-200 text-xl">
-                    {type.icon}
-                  </div>
-                  <div>
-                    <h3 className="mb-0.5 font-bold text-gray-900">{type.name}</h3>
-                    <p className="text-xs text-gray-600">{type.description}</p>
-                    <p className="mt-1 text-xs text-gray-400">
-                      {type.minLength}〜{type.maxLength}文字
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* 生成ボタン */}
-            {selectedType && (
-              <div className="mb-6 text-center">
+            {/* 直接アクセス時: 説明 + 生成ボタンのみ */}
+            {isDirectAccess && selectedType ? (
+              <div className="glass-card mb-6 p-6 text-center">
+                <p className="mb-2 text-sm text-gray-600">{selectedType.description}</p>
+                <p className="mb-4 text-xs text-gray-400">
+                  {selectedType.minLength}〜{selectedType.maxLength}文字 ／ 特徴 {traitCount}個で生成
+                </p>
                 <button
                   onClick={handleGenerate}
                   disabled={isGenerating}
@@ -175,6 +149,63 @@ function CreateContent() {
                   )}
                 </button>
               </div>
+            ) : (
+              <>
+                {/* 特徴サマリー */}
+                <div className="glass-card mb-6 p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      蓄積された特徴: <span className="font-bold text-sky-600">{traitCount}個</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* アウトプットタイプ選択 */}
+                <div className="mb-6 grid gap-3 md:grid-cols-2">
+                  {outputTypes.map((type) => (
+                    <button
+                      key={type.id}
+                      onClick={() => handleSelectType(type)}
+                      className={`glass-card flex items-start gap-4 p-4 text-left transition-all ${
+                        selectedType?.id === type.id
+                          ? 'ring-2 ring-sky-400 shadow-lg'
+                          : 'hover:shadow-md'
+                      }`}
+                    >
+                      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-200 to-blue-200 text-xl">
+                        {type.icon}
+                      </div>
+                      <div>
+                        <h3 className="mb-0.5 font-bold text-gray-900">{type.name}</h3>
+                        <p className="text-xs text-gray-600">{type.description}</p>
+                        <p className="mt-1 text-xs text-gray-400">
+                          {type.minLength}〜{type.maxLength}文字
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* 生成ボタン */}
+                {selectedType && (
+                  <div className="mb-6 text-center">
+                    <button
+                      onClick={handleGenerate}
+                      disabled={isGenerating}
+                      className="rounded-xl bg-gradient-to-r from-sky-500 to-blue-500 px-8 py-3 font-bold text-white shadow-lg disabled:opacity-50"
+                    >
+                      {isGenerating ? (
+                        <span className="flex items-center gap-2">
+                          <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                          生成中...
+                        </span>
+                      ) : (
+                        `${selectedType.name}を生成`
+                      )}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
 
             {/* エラー表示 */}
