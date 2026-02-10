@@ -107,16 +107,16 @@ export default function SelectInterviewer() {
         <div className="mx-auto max-w-4xl">
           <p className="mb-6 text-center text-sm text-gray-600">画像をタップして選択</p>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-2 gap-4">
             {INTERVIEWERS.map((interviewer) => (
               <button
                 key={interviewer.id}
                 onClick={() => handleSelectInterviewer(interviewer.id as InterviewerId)}
                 className="group relative overflow-hidden rounded-2xl shadow-lg transition-all hover:scale-[1.02] hover-glow"
               >
-                <div className="relative h-[400px] w-full">
+                <div className="relative aspect-[2/3] w-full">
                   <Image
-                    src={interviewer.gender === '女性' ? '/image/lady-interviewer.png' : '/image/man-interviewer.png'}
+                    src={interviewer.gender === '女性' ? '/image/lady-interviewer2.png' : '/image/man-interviewer2.png'}
                     alt={`${interviewer.gender}のインタビュワー`}
                     fill
                     className="object-cover transition-transform group-hover:scale-105"

@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'js-cookie';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
-import { Pickaxe, User, Hammer, Sparkles } from 'lucide-react';
+import { Pickaxe, User, Lightbulb, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Home() {
   const router = useRouter();
@@ -54,10 +55,14 @@ export default function Home() {
 
       <main className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-10 text-center">
         {/* ヘッダー */}
-        <div className="flex flex-col gap-4">
-          <h1 className="bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-5xl font-bold text-transparent md:text-6xl">
-            じぶんクラフト
-          </h1>
+        <div className="flex flex-col items-center gap-4">
+          <Image
+            src="/image/mecraft_logo.png"
+            alt="じぶんクラフト"
+            width={480}
+            height={128}
+            priority
+          />
           <p className="text-xl text-gray-700 md:text-2xl">
             自分の特徴を掘って、集めて、つくろう
           </p>
@@ -89,7 +94,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-center gap-2 rounded-xl bg-white/40 p-4 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-200 to-blue-200">
-                <Hammer size={24} className="text-sky-600" />
+                <Lightbulb size={24} className="text-sky-600" />
               </div>
               <h3 className="font-bold text-gray-800">じぶんを「つくる」</h3>
               <p className="text-sm text-gray-600">
@@ -107,7 +112,7 @@ export default function Home() {
             className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Sparkles size={20} />
-            {isLoading ? '準備中...' : 'さっそく掘ってみる'}
+            {isLoading ? '準備中...' : 'ためしに始める（登録なし）'}
           </button>
           <button
             onClick={() => router.push('/login?mode=signup')}

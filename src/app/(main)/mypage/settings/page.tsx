@@ -222,9 +222,9 @@ export default function SettingsPage() {
                           ? 'ring-4 ring-emerald-400 shadow-lg' : 'hover:shadow-md'
                       }`}
                     >
-                      <div className="relative aspect-[3/4]">
+                      <div className="relative aspect-[2/3]">
                         <Image
-                          src={interviewer.gender === '女性' ? '/image/lady-interviewer.png' : '/image/man-interviewer.png'}
+                          src={interviewer.gender === '女性' ? '/image/lady-interviewer2.png' : '/image/man-interviewer2.png'}
                           alt={`${interviewer.gender}のインタビュワー`}
                           fill
                           className="object-cover"

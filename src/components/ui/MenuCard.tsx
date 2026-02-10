@@ -29,7 +29,7 @@ export default function MenuCard({
   const router = useRouter();
 
   return (
-    <div className={`glass-card rounded-2xl p-4 ${disabled ? 'opacity-50' : ''}`}>
+    <div className={`glass-card rounded-2xl p-4 ${disabled ? 'opacity-60' : ''}`}>
       <div className="flex items-center gap-4">
         <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${bgGradient}`}>
           <Icon size={24} className={iconColor} />
@@ -38,9 +38,7 @@ export default function MenuCard({
           <h3 className="text-base font-bold text-gray-900">{title}</h3>
           <p className="text-sm text-gray-600">{description}</p>
         </div>
-        {disabled ? (
-          <p className="flex-shrink-0 text-xs text-gray-500">{disabledMessage}</p>
-        ) : (
+        {!disabled && (
           <button
             onClick={() => router.push(href)}
             className={`flex-shrink-0 rounded-xl bg-gradient-to-r ${buttonGradient} px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg`}
@@ -49,6 +47,9 @@ export default function MenuCard({
           </button>
         )}
       </div>
+      {disabled && disabledMessage && (
+        <p className="mt-3 text-center text-xs text-gray-500">{disabledMessage}</p>
+      )}
     </div>
   );
 }
