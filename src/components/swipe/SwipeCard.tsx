@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { SwipeQuestion } from '@/lib/swipeQuestions';
 
 interface SwipeCardProps {
@@ -17,8 +17,18 @@ export default function SwipeCard({ question, currentIndex, totalCount, onSelect
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [flyOff, setFlyOff] = useState<'left' | 'right' | null>(null);
+  const [showHint, setShowHint] = useState(false);
   const startXRef = useRef(0);
   const isDraggingRef = useRef(false);
+
+  // 最初のカード表示時にタッチデバイスのみスワイプヒントアニメーション
+  useEffect(() => {
+    if (currentIndex !== 0) return;
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    if (!isTouch) return;
+    const timer = setTimeout(() => setShowHint(true), 400);
+    return () => clearTimeout(timer);
+  }, [currentIndex]);
 
   const handleDragStart = useCallback((clientX: number) => {
     if (isAnimating || flyOff) return;
@@ -94,6 +104,8 @@ export default function SwipeCard({ question, currentIndex, totalCount, onSelect
     cardStyle = { transform: 'translateX(150%) rotate(30deg)', transition: 'transform 0.3s ease-out', opacity: 0 };
   } else if (isDragging) {
     cardStyle = { transform: `translateX(${dragX}px) rotate(${rotation}deg)`, transition: 'none' };
+  } else if (showHint) {
+    cardStyle = { animation: 'swipe-hint 1s ease-in-out', transform: 'translateX(0) rotate(0deg)' };
   } else {
     cardStyle = { transform: 'translateX(0) rotate(0deg)', transition: 'transform 0.3s ease-out' };
   }
@@ -104,6 +116,19 @@ export default function SwipeCard({ question, currentIndex, totalCount, onSelect
 
   return (
     <div>
+      {/* Swipe hint animation (touch devices only) */}
+      {showHint && (
+        <style>{`
+          @keyframes swipe-hint {
+            0%   { transform: translateX(0) rotate(0deg); }
+            20%  { transform: translateX(-24px) rotate(-2deg); }
+            50%  { transform: translateX(24px) rotate(2deg); }
+            80%  { transform: translateX(-8px) rotate(-0.5deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+          }
+        `}</style>
+      )}
+
       {/* Progress */}
       <div className="mb-6 flex items-center justify-center gap-2">
         {Array.from({ length: totalCount }, (_, i) => (
@@ -130,6 +155,7 @@ export default function SwipeCard({ question, currentIndex, totalCount, onSelect
       <div
         className="glass-card relative cursor-grab select-none rounded-2xl border-2 border-amber-100 p-6 active:cursor-grabbing"
         style={cardStyle}
+        onAnimationEnd={() => setShowHint(false)}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

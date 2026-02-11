@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { FileText, Palette, MessageSquare, ChevronRight } from 'lucide-react';
+import { FileText, Palette, MessageSquare, Sparkles, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTraits } from '@/contexts/TraitsContext';
 import { usePageHeader } from '@/contexts/PageHeaderContext';
@@ -14,6 +14,16 @@ export default function CraftPage() {
   usePageHeader({ title: 'つくる' });
 
   const craftMenuItems = [
+    {
+      title: 'じぶんキャッチコピー',
+      description: 'SNSプロフィールにそのまま使える一行を生成',
+      icon: Sparkles,
+      iconColor: 'text-amber-600',
+      bgGradient: 'from-amber-200 to-orange-200',
+      buttonGradient: 'from-amber-500 to-orange-500',
+      href: '/craft/catchcopy',
+      minTraits: 3,
+    },
     {
       title: '自分画像生成',
       description: '特徴データからイメージ画像を生成',
