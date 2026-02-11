@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: ExtractTraitsRequest = await request.json();
-    const { userMessage, assistantMessage, messageIndex, existingTraits } = body;
+    const { userMessage, assistantMessage, messageIndex, existingTraits, recentMessages } = body;
 
     if (!userMessage) {
       return NextResponse.json<ExtractTraitsResponse>(
@@ -126,16 +126,24 @@ export async function POST(request: NextRequest) {
         ).join('\n')
       : 'なし';
 
+    // 直近の会話コンテキストを整形（最新のやりとりは除く）
+    const conversationContext = recentMessages && recentMessages.length > 0
+      ? recentMessages
+          .map((m) => `${m.role === 'user' ? 'ユーザー' : 'インタビュワー'}: ${m.content}`)
+          .join('\n')
+      : '';
+
     const prompt = `${EXTRACTION_PROMPT}
 
 【既存の特徴一覧】
 ${existingTraitsInfo}
+${conversationContext ? `\n【直近の会話の流れ（参考コンテキスト）】\n${conversationContext}\n` : ''}
+【今回のやりとり（メインの分析対象）】
+インタビュワーの質問: ${assistantMessage}
 
-【インタビュワーの質問】
-${assistantMessage}
+ユーザーの回答: ${userMessage}
 
-【ユーザーの回答】
-${userMessage}`;
+上記の「今回のやりとり」を中心に、会話の流れも考慮して特徴を抽出してください。短い回答でも、直近の会話コンテキストから意図や傾向を読み取ってください。`;
 
     // リトライロジック（レート制限対策）
     let result;

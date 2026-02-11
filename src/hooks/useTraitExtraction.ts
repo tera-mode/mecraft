@@ -6,6 +6,7 @@ import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
 interface UseTraitExtractionOptions {
   onTraitExtracted?: (newTraits: UserTrait[], updatedTraits: UserTrait[]) => void;
+  onTraitsChanged?: (allTraits: UserTrait[]) => void;
 }
 
 interface UseTraitExtractionReturn {
@@ -16,7 +17,8 @@ interface UseTraitExtractionReturn {
   extractTraits: (
     userMessage: string,
     assistantMessage: string,
-    messageIndex: number
+    messageIndex: number,
+    recentMessages?: { role: string; content: string }[]
   ) => Promise<void>;
   clearHighlights: () => void;
   setTraits: (traits: UserTrait[]) => void;
@@ -25,18 +27,25 @@ interface UseTraitExtractionReturn {
 export function useTraitExtraction(
   options: UseTraitExtractionOptions = {}
 ): UseTraitExtractionReturn {
-  const { onTraitExtracted } = options;
+  const { onTraitExtracted, onTraitsChanged } = options;
   const [traits, setTraits] = useState<UserTrait[]>([]);
   const [newTraitIds, setNewTraitIds] = useState<string[]>([]);
   const [updatedTraitIds, setUpdatedTraitIds] = useState<string[]>([]);
   const [isExtracting, setIsExtracting] = useState(false);
   const extractionQueue = useRef<Promise<void>>(Promise.resolve());
 
+  // コールバックをrefで保持してクロージャの問題を避ける
+  const onTraitsChangedRef = useRef(onTraitsChanged);
+  onTraitsChangedRef.current = onTraitsChanged;
+  const onTraitExtractedRef = useRef(onTraitExtracted);
+  onTraitExtractedRef.current = onTraitExtracted;
+
   const extractTraits = useCallback(
     async (
       userMessage: string,
       assistantMessage: string,
-      messageIndex: number
+      messageIndex: number,
+      recentMessages?: { role: string; content: string }[]
     ) => {
       // キューに追加して順番に処理
       extractionQueue.current = extractionQueue.current.then(async () => {
@@ -58,6 +67,7 @@ export function useTraitExtraction(
               assistantMessage,
               messageIndex,
               existingTraits: currentTraits,
+              recentMessages: recentMessages || [],
             }),
           });
 
@@ -81,18 +91,14 @@ export function useTraitExtraction(
           }));
 
           if (extractedNewTraits.length > 0 || extractedUpdatedTraits.length > 0) {
-            setTraits((prevTraits) => {
-              // 更新されたタグを置き換え
-              let updatedList = prevTraits.map((existing) => {
-                const updated = extractedUpdatedTraits.find((u) => u.id === existing.id);
-                return updated || existing;
-              });
-
-              // 新規タグを追加
-              updatedList = [...updatedList, ...extractedNewTraits];
-
-              return updatedList;
+            // 新しいリストを先に計算
+            let updatedList = currentTraits.map((existing) => {
+              const updated = extractedUpdatedTraits.find((u) => u.id === existing.id);
+              return updated || existing;
             });
+            updatedList = [...updatedList, ...extractedNewTraits];
+
+            setTraits(updatedList);
 
             // ハイライト用のIDを設定
             setNewTraitIds(extractedNewTraits.map((t) => t.id));
@@ -104,9 +110,9 @@ export function useTraitExtraction(
               setUpdatedTraitIds([]);
             }, 3000);
 
-            if (onTraitExtracted) {
-              onTraitExtracted(extractedNewTraits, extractedUpdatedTraits);
-            }
+            // 全特徴が変わったことを通知（保存用）
+            onTraitsChangedRef.current?.(updatedList);
+            onTraitExtractedRef.current?.(extractedNewTraits, extractedUpdatedTraits);
           }
         } catch (error) {
           console.error('Error extracting traits:', error);
@@ -115,7 +121,7 @@ export function useTraitExtraction(
         }
       });
     },
-    [onTraitExtracted]
+    []
   );
 
   const clearHighlights = useCallback(() => {

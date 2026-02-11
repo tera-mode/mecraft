@@ -1,12 +1,12 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { getInterviewer } from '@/lib/interviewers';
 import { getInterviewMode, isEndlessMode, getRandomQuestion } from '@/lib/interviewModes';
-import { ChatMessage, InterviewerId, InterviewMode } from '@/types';
+import { ChatMessage, InterviewerId, InterviewMode, UserTrait } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { TraitCardList, TraitCardCollapsible } from '@/components/interview';
 import { useTraitExtraction } from '@/hooks/useTraitExtraction';
@@ -32,7 +32,23 @@ export default function InterviewPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const isDesktop = useIsDesktop();
-  const { traits, newTraitIds, updatedTraitIds, isExtracting, extractTraits } = useTraitExtraction();
+  const interviewIdRef = useRef<string | null>(null);
+
+  // 抽出完了時にtraitsを保存するコールバック
+  const handleTraitsChanged = useCallback((allTraits: UserTrait[]) => {
+    const id = interviewIdRef.current;
+    if (id && allTraits.length > 0) {
+      fetch('/api/save-traits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ interviewId: id, traits: allTraits }),
+      }).catch(console.error);
+    }
+  }, []);
+
+  const { traits, newTraitIds, updatedTraitIds, isExtracting, extractTraits } = useTraitExtraction({
+    onTraitsChanged: handleTraitsChanged,
+  });
 
   const interviewer = interviewerId ? getInterviewer(interviewerId) : null;
   const modeConfig = getInterviewMode(mode);
@@ -147,15 +163,21 @@ export default function InterviewPage() {
       if (!saveResponse.ok) throw new Error('Failed to save interview');
 
       const saveResult = await saveResponse.json();
-      if (!currentInterviewId) setCurrentInterviewId(saveResult.interviewId);
+      if (!currentInterviewId) {
+        setCurrentInterviewId(saveResult.interviewId);
+        interviewIdRef.current = saveResult.interviewId;
+      }
 
-      const traitsToSave = currentTraits || traits;
-      if (traitsToSave.length > 0) {
-        await fetch('/api/save-traits', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ interviewId: saveResult.interviewId, traits: traitsToSave }),
-        });
+      // traits保存は完了時のみ（進行中はonTraitsChangedコールバックで保存）
+      if (status === 'completed') {
+        const traitsToSave = currentTraits || traits;
+        if (traitsToSave.length > 0) {
+          await fetch('/api/save-traits', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ interviewId: saveResult.interviewId, traits: traitsToSave }),
+          });
+        }
       }
 
       return saveResult.interviewId;
@@ -209,13 +231,18 @@ export default function InterviewPage() {
       const updatedMessages = [...messages, userMessage, assistantMessage];
 
       if (!data.isCompleted) {
-        extractTraits(currentInput, data.message, messages.length + 1);
+        // 直近の会話をコンテキストとして渡す（今回のやりとりは除く）
+        const recentContext = messages.slice(-6).map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
+        extractTraits(currentInput, data.message, messages.length + 1, recentContext);
       }
 
       if (data.isCompleted) {
         await handleInterviewComplete(updatedMessages, data.interviewData);
       } else {
-        saveInterview(updatedMessages, null, 'in_progress', traits).catch(console.error);
+        saveInterview(updatedMessages, null, 'in_progress').catch(console.error);
       }
     } catch (error) {
       console.error('Error sending message:', error);

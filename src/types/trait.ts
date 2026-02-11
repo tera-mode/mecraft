@@ -91,6 +91,7 @@ export interface ExtractTraitsRequest {
   assistantMessage: string;
   messageIndex: number;
   existingTraits: UserTrait[];
+  recentMessages?: { role: string; content: string }[];
 }
 
 export interface ExtractTraitsResponse {
