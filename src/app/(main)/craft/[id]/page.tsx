@@ -112,7 +112,7 @@ export default function OutputDetailPage() {
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="h-6 w-6 animate-spin rounded-full border-4 spinner-warm"></div>
-          <p className="text-sm text-gray-600">読み込み中...</p>
+          <p className="text-sm text-stone-500">読み込み中...</p>
         </div>
       </div>
     );
@@ -145,8 +145,8 @@ export default function OutputDetailPage() {
           <div className="flex items-center gap-3">
             <span className="text-3xl">{outputConfig?.icon}</span>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">{outputConfig?.name}</h1>
-              <p className="text-sm text-gray-500">
+              <h1 className="text-xl font-bold text-stone-800">{outputConfig?.name}</h1>
+              <p className="text-sm text-stone-500">
                 {output?.createdAt
                   ? new Date(output.createdAt).toLocaleDateString('ja-JP')
                   : ''}
@@ -167,17 +167,17 @@ export default function OutputDetailPage() {
               <textarea
                 value={editedContent}
                 onChange={(e) => setEditedContent(e.target.value)}
-                className="w-full min-h-[200px] rounded-xl border border-sky-200 bg-white/80 p-4 text-gray-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                className="w-full min-h-[200px] rounded-xl border border-sky-200 bg-white/80 p-4 text-stone-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200"
               />
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm text-gray-500">{editedContent.length}文字</span>
+                <span className="text-sm text-stone-500">{editedContent.length}文字</span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
                       setEditedContent(displayContent);
                       setIsEditing(false);
                     }}
-                    className="rounded-xl border border-gray-200 bg-white/80 px-4 py-2 text-sm font-semibold text-gray-700"
+                    className="rounded-xl border border-stone-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700"
                   >
                     キャンセル
                   </button>
@@ -193,20 +193,20 @@ export default function OutputDetailPage() {
             </>
           ) : (
             <>
-              <p className="whitespace-pre-wrap text-gray-800">{displayContent}</p>
+              <p className="whitespace-pre-wrap text-stone-800">{displayContent}</p>
               <div className="mt-4 flex items-center justify-between border-t border-sky-100 pt-4">
-                <span className="text-sm text-gray-500">{displayContent.length}文字</span>
+                <span className="text-sm text-stone-500">{displayContent.length}文字</span>
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 rounded-xl border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-gray-700 transition-all hover:bg-sky-50"
+                    className="flex items-center gap-1.5 rounded-xl border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition-all hover:bg-sky-50"
                   >
                     {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
                     {copied ? 'コピーしました！' : 'コピー'}
                   </button>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-1.5 rounded-xl border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-gray-700 transition-all hover:bg-sky-50"
+                    className="flex items-center gap-1.5 rounded-xl border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition-all hover:bg-sky-50"
                   >
                     <Pencil size={14} />
                     編集

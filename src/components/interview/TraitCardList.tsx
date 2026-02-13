@@ -34,8 +34,8 @@ export default function TraitCardList({
     <div className="glass flex h-full w-80 flex-col border-l border-orange-100">
       {/* ヘッダー */}
       <div className="glass-header px-4 py-3">
-        <h2 className="font-bold text-gray-800">あなたの特徴</h2>
-        <p className="text-xs text-gray-500 mt-0.5">
+        <h2 className="font-bold text-stone-800">あなたの特徴</h2>
+        <p className="text-xs text-stone-500 mt-0.5">
           インタビューから抽出された特徴 ({traits.length}件)
         </p>
       </div>
@@ -43,7 +43,7 @@ export default function TraitCardList({
       {/* コンテンツ */}
       <div className="flex-1 overflow-y-auto px-3 py-3">
         {traits.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
+          <div className="flex flex-col items-center justify-center h-full text-stone-400">
             {isLoading ? (
               <>
                 <div className="w-8 h-8 border-2 spinner-warm rounded-full animate-spin mb-2" />

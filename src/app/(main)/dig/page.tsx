@@ -22,7 +22,7 @@ export default function DigPage() {
   return (
     <div className="px-4 py-6">
       <div className="mx-auto max-w-lg">
-        <p className="mb-6 text-center text-sm text-gray-600">2つの方法であなたの特徴を発見</p>
+        <p className="mb-6 text-center text-sm text-stone-500">2つの方法であなたの特徴を発見</p>
 
         <div className="space-y-4">
           <MenuCard

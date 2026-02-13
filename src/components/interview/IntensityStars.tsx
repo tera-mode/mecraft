@@ -22,7 +22,7 @@ export default function IntensityStars({
   return (
     <span className={`${sizeClasses[size]} tracking-tight`} aria-label={`強度: ${filledStars}/5`}>
       <span className="text-yellow-500">{'★'.repeat(filledStars)}</span>
-      <span className="text-gray-300">{'☆'.repeat(emptyStars)}</span>
+      <span className="text-stone-300">{'☆'.repeat(emptyStars)}</span>
     </span>
   );
 }

@@ -26,7 +26,7 @@ export default function TraitDetailPage() {
         onClick={() => setShowDeleteConfirm(true)}
         className="rounded-full p-2 hover:bg-red-50 transition-colors"
       >
-        <Trash2 size={18} className="text-gray-400 hover:text-red-500" />
+        <Trash2 size={18} className="text-stone-400 hover:text-red-500" />
       </button>
     ) : undefined,
   });
@@ -35,7 +35,7 @@ export default function TraitDetailPage() {
     return (
       <div className="px-4 py-8 text-center">
         <div className="glass-card mx-auto max-w-md p-8">
-          <p className="text-gray-600">特徴が見つかりませんでした</p>
+          <p className="text-stone-500">特徴が見つかりませんでした</p>
           <button
             onClick={() => router.push('/mypage')}
             className="mt-4 text-emerald-600 underline"
@@ -101,21 +101,21 @@ export default function TraitDetailPage() {
           {/* Meta info */}
           <div className="glass-card p-4 space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">確信度</span>
-              <span className="font-medium text-gray-900">{Math.round(trait.confidence * 100)}%</span>
+              <span className="text-stone-500">確信度</span>
+              <span className="font-medium text-stone-800">{Math.round(trait.confidence * 100)}%</span>
             </div>
             {trait.extractedAt && (
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">発見日</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-stone-500">発見日</span>
+                <span className="font-medium text-stone-800">
                   {new Date(trait.extractedAt).toLocaleDateString('ja-JP')}
                 </span>
               </div>
             )}
             {trait.updatedAt && (
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">更新日</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-stone-500">更新日</span>
+                <span className="font-medium text-stone-800">
                   {new Date(trait.updatedAt).toLocaleDateString('ja-JP')}
                 </span>
               </div>
@@ -128,15 +128,15 @@ export default function TraitDetailPage() {
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
           <div className="glass-modal w-full max-w-md rounded-3xl p-6">
-            <h2 className="mb-4 text-center text-xl font-bold text-gray-900">
+            <h2 className="mb-4 text-center text-xl font-bold text-stone-800">
               「{trait.label}」を削除しますか？
             </h2>
-            <p className="mb-6 text-center text-xs text-gray-500">この操作は取り消せません。</p>
+            <p className="mb-6 text-center text-xs text-stone-500">この操作は取り消せません。</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={isDeleting}
-                className="flex-1 rounded-xl border border-gray-200 bg-white/80 px-4 py-3 font-semibold text-gray-700 disabled:opacity-50"
+                className="flex-1 rounded-xl border border-stone-200 bg-white/80 px-4 py-3 font-semibold text-stone-700 disabled:opacity-50"
               >
                 キャンセル
               </button>

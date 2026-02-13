@@ -50,11 +50,11 @@ export default function MyPage() {
                 {userProfile?.nickname ? '😊' : '👤'}
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-stone-800">
                   {displayName}さん
                 </h2>
                 {userProfile?.occupation && (
-                  <p className="text-sm text-gray-600">{userProfile.occupation}</p>
+                  <p className="text-sm text-stone-500">{userProfile.occupation}</p>
                 )}
               </div>
             </div>
@@ -64,7 +64,7 @@ export default function MyPage() {
           {isGuest && (
             <div className="glass-card mb-6 p-4">
               <p className="mb-2 text-sm font-semibold text-emerald-700">ゲストモードでご利用中</p>
-              <p className="mb-3 text-xs text-gray-600">ログインすると特徴データが保存されます。</p>
+              <p className="mb-3 text-xs text-stone-500">ログインすると特徴データが保存されます。</p>
               <button
                 onClick={() => router.push('/login?mode=signup')}
                 className="btn-gradient-secondary rounded-xl px-4 py-2 text-sm font-semibold text-white"
@@ -90,7 +90,7 @@ export default function MyPage() {
           {/* Trait stats */}
           <div className="glass-card mb-4 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-stone-700">
                 集めた特徴: <span className="font-bold text-emerald-600">{traitCount}個</span>
               </span>
               <button
@@ -106,16 +106,16 @@ export default function MyPage() {
             <div className="glass-card p-8 text-center">
               <div className="flex items-center justify-center gap-3">
                 <div className="h-6 w-6 animate-spin rounded-full border-4 spinner-warm"></div>
-                <p className="text-gray-600">読み込み中...</p>
+                <p className="text-stone-500">読み込み中...</p>
               </div>
             </div>
           ) : traits.length === 0 ? (
             <div className="glass-card p-8 text-center">
               <div className="mb-4 text-5xl">🏷️</div>
-              <h3 className="mb-2 text-lg font-semibold text-gray-900">
+              <h3 className="mb-2 text-lg font-semibold text-stone-800">
                 まだ特徴がありません
               </h3>
-              <p className="mb-4 text-sm text-gray-600">
+              <p className="mb-4 text-sm text-stone-500">
                 スワイプ診断やインタビューで、あなたの特徴を発見しましょう
               </p>
               <button
@@ -134,7 +134,7 @@ export default function MyPage() {
                   className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                     selectedCategory === 'all'
                       ? 'bg-emerald-500 text-white'
-                      : 'bg-white/50 text-gray-700 hover:bg-white/80'
+                      : 'bg-white/50 text-stone-700 hover:bg-white/80'
                   }`}
                 >
                   すべて ({traitCount})
@@ -148,7 +148,7 @@ export default function MyPage() {
                       className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                         selectedCategory === cat.key
                           ? 'bg-emerald-500 text-white'
-                          : 'bg-white/50 text-gray-700 hover:bg-white/80'
+                          : 'bg-white/50 text-stone-700 hover:bg-white/80'
                       }`}
                     >
                       {cat.label} ({cat.count})
@@ -170,7 +170,7 @@ export default function MyPage() {
                       <button
                         onClick={() => setShowDeleteConfirm(trait.label)}
                         disabled={deletingTraitLabel === trait.label}
-                        className="text-xs text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50 flex items-center gap-1"
+                        className="text-xs text-stone-400 hover:text-red-500 transition-colors disabled:opacity-50 flex items-center gap-1"
                       >
                         削除
                       </button>
@@ -187,20 +187,20 @@ export default function MyPage() {
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
           <div className="glass-modal w-full max-w-md rounded-3xl p-6">
-            <h2 className="mb-4 text-center text-xl font-bold text-gray-900">
+            <h2 className="mb-4 text-center text-xl font-bold text-stone-800">
               特徴を削除しますか？
             </h2>
-            <p className="mb-2 text-center text-sm text-gray-600">
+            <p className="mb-2 text-center text-sm text-stone-500">
               「{showDeleteConfirm}」を削除します。
             </p>
-            <p className="mb-6 text-center text-xs text-gray-500">
+            <p className="mb-6 text-center text-xs text-stone-500">
               この操作は取り消せません。
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(null)}
                 disabled={deletingTraitLabel !== null}
-                className="flex-1 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3 font-semibold text-gray-700 transition-all hover:bg-emerald-50 disabled:opacity-50"
+                className="flex-1 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3 font-semibold text-stone-700 transition-all hover:bg-emerald-50 disabled:opacity-50"
               >
                 キャンセル
               </button>

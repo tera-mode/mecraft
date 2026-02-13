@@ -21,7 +21,7 @@ export default function TraitCardCollapsible({
       {/* ヘッダー */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-orange-100/50">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-gray-800 text-sm">あなたの特徴</span>
+          <span className="font-bold text-stone-800 text-sm">あなたの特徴</span>
           {traits.length > 0 && (
             <span className="rounded-full bg-gradient-to-r from-orange-100 to-amber-100 px-2 py-0.5 text-xs font-medium text-orange-700">
               {traits.length}
@@ -39,7 +39,7 @@ export default function TraitCardCollapsible({
       {/* コンテンツ（横並びタグ形式） */}
       <div className="max-h-32 overflow-y-auto px-3 py-2">
         {traits.length === 0 ? (
-          <div className="flex items-center justify-center py-4 text-gray-400">
+          <div className="flex items-center justify-center py-4 text-stone-400">
             {isLoading ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 spinner-warm rounded-full animate-spin" />

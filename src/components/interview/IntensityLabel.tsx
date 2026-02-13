@@ -22,7 +22,7 @@ export default function IntensityLabel({
 
   return (
     <span
-      className={`${sizeClasses[size]} rounded-full bg-white/60 text-gray-700 font-medium`}
+      className={`${sizeClasses[size]} rounded-full bg-white/60 text-stone-700 font-medium`}
     >
       {intensityLabel}
     </span>

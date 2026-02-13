@@ -77,13 +77,13 @@ export default function InterviewHistoryPage() {
                 <div className="glass-card p-8 text-center">
                   <div className="flex items-center justify-center gap-3">
                     <div className="h-6 w-6 animate-spin rounded-full border-4 spinner-warm"></div>
-                    <p className="text-gray-600">読み込み中...</p>
+                    <p className="text-stone-500">読み込み中...</p>
                   </div>
                 </div>
               ) : interviews.length === 0 ? (
                 <div className="glass-card p-8 text-center">
                   <div className="mb-4 text-5xl">💬</div>
-                  <h3 className="mb-2 text-lg font-semibold text-gray-900">まだインタビューがありません</h3>
+                  <h3 className="mb-2 text-lg font-semibold text-stone-800">まだインタビューがありません</h3>
                   <button
                     onClick={() => router.push('/dig/interview/select-mode')}
                     className="btn-gradient-primary mt-4 rounded-xl px-6 py-2 font-semibold text-white"
@@ -111,14 +111,14 @@ export default function InterviewHistoryPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="mb-1 flex items-center gap-2">
-                              <h3 className="font-bold text-gray-900 truncate">{nickname}さんのインタビュー</h3>
+                              <h3 className="font-bold text-stone-800 truncate">{nickname}さんのインタビュー</h3>
                               {modeConfig && (
                                 <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700 flex-shrink-0">
                                   {modeConfig.name}
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-stone-400">
                               {date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })}
                               {' ・ '}{dynamicCount}件の質問
                               {interview.status === 'in_progress' && (
@@ -126,7 +126,7 @@ export default function InterviewHistoryPage() {
                               )}
                             </p>
                           </div>
-                          <span className="text-gray-400">→</span>
+                          <span className="text-stone-400">→</span>
                         </div>
                       </button>
                     );

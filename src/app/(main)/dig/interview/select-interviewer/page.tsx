@@ -94,7 +94,7 @@ export default function SelectInterviewer() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 spinner-warm"></div>
-          <p className="text-gray-600">読み込み中...</p>
+          <p className="text-stone-500">読み込み中...</p>
         </div>
       </div>
     );
@@ -105,7 +105,7 @@ export default function SelectInterviewer() {
 
       <div className="px-4 py-6">
         <div className="mx-auto max-w-4xl">
-          <p className="mb-6 text-center text-sm text-gray-600">画像をタップして選択</p>
+          <p className="mb-6 text-center text-sm text-stone-500">画像をタップして選択</p>
 
           <div className="grid grid-cols-2 gap-4">
             {INTERVIEWERS.map((interviewer) => (
@@ -145,10 +145,10 @@ export default function SelectInterviewer() {
               </div>
             </div>
 
-            <h2 className="mb-2 text-center text-xl font-bold text-gray-900">
+            <h2 className="mb-2 text-center text-xl font-bold text-stone-800">
               インタビュワーに名前をつけてください
             </h2>
-            <p className="mb-6 text-center text-sm text-gray-600">好きな名前で呼んでください</p>
+            <p className="mb-6 text-center text-sm text-stone-500">好きな名前で呼んでください</p>
 
             <input
               type="text"
@@ -161,7 +161,7 @@ export default function SelectInterviewer() {
             />
 
             <div className="mb-4">
-              <p className="mb-2 text-left text-sm font-medium text-gray-700">性格のカスタマイズ（任意）</p>
+              <p className="mb-2 text-left text-sm font-medium text-stone-700">性格のカスタマイズ（任意）</p>
               <textarea
                 value={customPersonality}
                 onChange={(e) => setCustomPersonality(e.target.value)}
@@ -175,7 +175,7 @@ export default function SelectInterviewer() {
             <div className="flex gap-3">
               <button
                 onClick={() => { setShowNameInput(false); setSelectedInterviewer(null); }}
-                className="flex-1 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3 font-semibold text-gray-700 transition-all hover:bg-emerald-50"
+                className="flex-1 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3 font-semibold text-stone-700 transition-all hover:bg-emerald-50"
               >
                 戻る
               </button>

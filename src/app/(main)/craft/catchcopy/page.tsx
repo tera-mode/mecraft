@@ -172,7 +172,7 @@ export default function CatchcopyPage() {
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="h-6 w-6 animate-spin rounded-full border-4 spinner-warm"></div>
-          <p className="text-sm text-gray-600">読み込み中...</p>
+          <p className="text-sm text-stone-500">読み込み中...</p>
         </div>
       </div>
     );
@@ -191,7 +191,7 @@ export default function CatchcopyPage() {
         {/* 特徴数チェック */}
         {!canGenerate ? (
           <div className="glass-card mb-6 p-6 text-center">
-            <p className="mb-4 text-gray-700">
+            <p className="mb-4 text-stone-700">
               キャッチコピーを生成するには、特徴データが3個以上必要です
             </p>
             <p className="mb-4 text-2xl font-bold text-emerald-600">
@@ -209,15 +209,15 @@ export default function CatchcopyPage() {
             {/* プレビュー表示 */}
             {preview && (
               <div className="glass-card mb-6 p-6">
-                <h3 className="mb-3 text-center text-sm font-semibold text-gray-500">生成結果</h3>
-                <p className="mb-6 text-center text-xl font-bold leading-relaxed text-gray-900">
+                <h3 className="mb-3 text-center text-sm font-semibold text-stone-500">生成結果</h3>
+                <p className="mb-6 text-center text-xl font-bold leading-relaxed text-stone-800">
                   {preview}
                 </p>
                 <div className="flex items-center justify-center gap-3">
                   <button
                     onClick={handleGenerate}
                     disabled={isGenerating}
-                    className="flex items-center gap-1.5 rounded-xl border border-amber-200 bg-white/80 px-4 py-2 text-sm font-semibold text-gray-700 transition-all hover:bg-amber-50 disabled:opacity-50"
+                    className="flex items-center gap-1.5 rounded-xl border border-amber-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition-all hover:bg-amber-50 disabled:opacity-50"
                   >
                     <RefreshCw size={14} />
                     再生成
@@ -236,7 +236,7 @@ export default function CatchcopyPage() {
             {/* 生成ボタン（プレビューがない時のみ表示） */}
             {!preview && (
               <div className="glass-card mb-6 p-6 text-center">
-                <p className="mb-4 text-gray-700">
+                <p className="mb-4 text-stone-700">
                   特徴データ: <span className="font-bold text-emerald-600">{traitCount}個</span>
                 </p>
 
@@ -245,7 +245,7 @@ export default function CatchcopyPage() {
                     <p className="mb-2 text-sm font-semibold text-amber-600">
                       次の生成は1日1回までです
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-stone-500">
                       次回生成可能: {getNextAvailableTime()?.toLocaleString('ja-JP')}
                     </p>
                   </div>
@@ -277,17 +277,17 @@ export default function CatchcopyPage() {
 
         {/* 履歴 */}
         <div className="glass-card p-6">
-          <h2 className="mb-4 text-lg font-bold text-gray-800">
+          <h2 className="mb-4 text-lg font-bold text-stone-800">
             生成履歴
             {history.length > 0 && (
-              <span className="ml-2 text-sm font-normal text-gray-500">
+              <span className="ml-2 text-sm font-normal text-stone-500">
                 ({history.length}件)
               </span>
             )}
           </h2>
 
           {history.length === 0 ? (
-            <p className="py-8 text-center text-gray-500">まだキャッチコピーがありません</p>
+            <p className="py-8 text-center text-stone-500">まだキャッチコピーがありません</p>
           ) : (
             <div className="space-y-3">
               {history.map((item) => (
@@ -295,13 +295,13 @@ export default function CatchcopyPage() {
                   key={item.id}
                   className="flex items-center gap-3 rounded-xl bg-white/80 p-4 shadow-sm"
                 >
-                  <p className="flex-1 font-semibold text-gray-800">
+                  <p className="flex-1 font-semibold text-stone-800">
                     {item.editedContent || item.content.body}
                   </p>
                   <div className="flex shrink-0 gap-1.5">
                     <button
                       onClick={() => handleCopy(item.editedContent || item.content.body, item.id)}
-                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-100 text-stone-500 transition-colors hover:bg-stone-200"
                       title="コピー"
                     >
                       {copiedId === item.id ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
@@ -309,7 +309,7 @@ export default function CatchcopyPage() {
                     <button
                       onClick={() => handleDelete(item.id)}
                       disabled={deletingId === item.id}
-                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 disabled:opacity-50"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-100 text-stone-500 transition-colors hover:bg-stone-200 disabled:opacity-50"
                       title="削除"
                     >
                       <Trash2 size={16} />

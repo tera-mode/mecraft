@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Pickaxe, User, Lightbulb, Users } from 'lucide-react';
+import { Pickaxe, User, Hammer, Users } from 'lucide-react';
 
 const tabs = [
   { href: '/dig', label: 'ほる', icon: Pickaxe, color: 'var(--tab-dig)' },
   { href: '/mypage', label: 'じぶん', icon: User, color: 'var(--tab-mypage)' },
-  { href: '/craft', label: 'つくる', icon: Lightbulb, color: 'var(--tab-craft)' },
+  { href: '/craft', label: 'つくる', icon: Hammer, color: 'var(--tab-craft)' },
   { href: '/everyone', label: 'みんな', icon: Users, color: 'var(--tab-everyone)' },
 ];
 
@@ -28,7 +28,7 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 glass-header border-t border-white/20 pb-safe-bottom">
-      <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-2">
+      <div className="mx-auto flex max-w-lg items-center justify-around px-2 h-20">
         {tabs.map((tab) => {
           const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/');
           const Icon = tab.icon;
@@ -41,10 +41,10 @@ export default function BottomNav() {
               <Icon
                 size={24}
                 style={isActive ? { color: tab.color } : undefined}
-                className={isActive ? '' : 'text-gray-400'}
+                className={isActive ? '' : 'text-stone-400'}
               />
               <span
-                className={`text-[10px] font-medium ${isActive ? '' : 'text-gray-400'}`}
+                className={`text-[10px] font-medium ${isActive ? '' : 'text-stone-400'}`}
                 style={isActive ? { color: tab.color } : undefined}
               >
                 {isActive ? '' : ''}{tab.label}

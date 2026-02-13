@@ -106,7 +106,7 @@ function LoginContent() {
       <div className="flex min-h-screen items-center justify-center bg-gradient-main">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-400 border-t-transparent"></div>
-          <p className="text-gray-600">読み込み中...</p>
+          <p className="text-stone-500">読み込み中...</p>
         </div>
       </div>
     );
@@ -124,7 +124,7 @@ function LoginContent() {
           <h1 className="bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-4xl font-bold text-transparent">
             じぶんクラフト
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-stone-500">
             {mode === 'login' ? 'ログイン' : '新規登録'}
           </p>
         </div>
@@ -149,7 +149,7 @@ function LoginContent() {
               className={`flex-1 rounded-lg px-4 py-2 font-semibold transition-all ${
                 mode === 'login'
                   ? 'bg-white text-emerald-600 shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-stone-500 hover:text-stone-800'
               }`}
             >
               ログイン
@@ -159,7 +159,7 @@ function LoginContent() {
               className={`flex-1 rounded-lg px-4 py-2 font-semibold transition-all ${
                 mode === 'signup'
                   ? 'bg-white text-emerald-600 shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-stone-500 hover:text-stone-800'
               }`}
             >
               新規登録
@@ -178,7 +178,7 @@ function LoginContent() {
             {mode === 'signup' && (
               <>
                 <div className="text-left">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">ニックネーム</label>
+                  <label className="mb-1 block text-sm font-medium text-stone-700">ニックネーム</label>
                   <input
                     type="text"
                     value={displayName}
@@ -189,7 +189,7 @@ function LoginContent() {
                   />
                 </div>
                 <div className="text-left">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">職業</label>
+                  <label className="mb-1 block text-sm font-medium text-stone-700">職業</label>
                   <select
                     value={occupation}
                     onChange={(e) => setOccupation(e.target.value as OccupationCategory)}
@@ -216,7 +216,7 @@ function LoginContent() {
             )}
 
             <div className="text-left">
-              <label className="mb-1 block text-sm font-medium text-gray-700">メールアドレス</label>
+              <label className="mb-1 block text-sm font-medium text-stone-700">メールアドレス</label>
               <input
                 type="email"
                 value={email}
@@ -228,7 +228,7 @@ function LoginContent() {
             </div>
 
             <div className="text-left">
-              <label className="mb-1 block text-sm font-medium text-gray-700">パスワード</label>
+              <label className="mb-1 block text-sm font-medium text-stone-700">パスワード</label>
               <input
                 type="password"
                 value={password}
@@ -256,7 +256,7 @@ function LoginContent() {
           {/* 区切り線 */}
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-200 to-transparent"></div>
-            <span className="text-sm text-gray-500">または</span>
+            <span className="text-sm text-stone-500">または</span>
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-200 to-transparent"></div>
           </div>
 
@@ -264,7 +264,7 @@ function LoginContent() {
           <button
             onClick={handleGoogleSignIn}
             disabled={isSigningIn}
-            className="glass flex w-full items-center justify-center gap-3 rounded-xl px-8 py-3 font-semibold text-gray-700 transition-all hover:bg-white/80 hover:shadow-md disabled:opacity-50"
+            className="glass flex w-full items-center justify-center gap-3 rounded-xl px-8 py-3 font-semibold text-stone-700 transition-all hover:bg-white/80 hover:shadow-md disabled:opacity-50"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
@@ -289,14 +289,14 @@ function LoginContent() {
         </div>
 
         {/* 説明文 */}
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-stone-500">
           ログインすることで、データを永続的に保存できます
         </p>
 
         {/* 戻るボタン */}
         <button
           onClick={() => router.push('/')}
-          className="text-gray-500 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-600 hover:decoration-emerald-500"
+          className="text-stone-500 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-600 hover:decoration-emerald-500"
         >
           トップに戻る
         </button>
@@ -312,7 +312,7 @@ export default function Login() {
         <div className="flex min-h-screen items-center justify-center bg-gradient-main">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-400 border-t-transparent"></div>
-            <p className="text-gray-600">読み込み中...</p>
+            <p className="text-stone-500">読み込み中...</p>
           </div>
         </div>
       }

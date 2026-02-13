@@ -30,7 +30,7 @@ export const TRAIT_CATEGORY_COLORS: Record<TraitCategory, string> = {
   value: 'bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 border-rose-200',
   lifestyle: 'bg-gradient-to-r from-sky-100 to-blue-100 text-sky-800 border-sky-200',
   experience: 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border-amber-200',
-  other: 'bg-gradient-to-r from-stone-100 to-gray-100 text-stone-700 border-stone-200',
+  other: 'bg-gradient-to-r from-stone-100 to-stone-100 text-stone-700 border-stone-200',
 };
 
 // 強弱キーワードの例

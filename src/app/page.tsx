@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'js-cookie';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
-import { Pickaxe, User, Lightbulb, Sparkles } from 'lucide-react';
+import { Pickaxe, User, Hammer, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 
 export default function Home() {
@@ -63,7 +63,7 @@ export default function Home() {
             height={128}
             priority
           />
-          <p className="text-xl text-gray-700 md:text-2xl">
+          <p className="text-xl text-stone-700 md:text-2xl">
             自分の特徴を掘って、集めて、つくろう
           </p>
         </div>
@@ -78,8 +78,8 @@ export default function Home() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 to-yellow-200">
                 <Pickaxe size={24} className="text-amber-600" />
               </div>
-              <h3 className="font-bold text-gray-800">じぶんを「ほる」</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-bold text-stone-800">じぶんを「ほる」</h3>
+              <p className="text-sm text-stone-500">
                 スワイプ診断やAIインタビューで自分の特徴を掘り出す
               </p>
             </div>
@@ -87,17 +87,17 @@ export default function Home() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-200 to-teal-200">
                 <User size={24} className="text-emerald-600" />
               </div>
-              <h3 className="font-bold text-gray-800">じぶんを「あつめる」</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-bold text-stone-800">じぶんを「あつめる」</h3>
+              <p className="text-sm text-stone-500">
                 発見した特徴がどんどん蓄積。自分の特徴図鑑ができる
               </p>
             </div>
             <div className="flex flex-col items-center gap-2 rounded-xl bg-white/40 p-4 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-sky-200 to-blue-200">
-                <Lightbulb size={24} className="text-sky-600" />
+                <Hammer size={24} className="text-sky-600" />
               </div>
-              <h3 className="font-bold text-gray-800">じぶんを「つくる」</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-bold text-stone-800">じぶんを「つくる」</h3>
+              <p className="text-sm text-stone-500">
                 集めた特徴から自己PR文やプロフィールを自動生成
               </p>
             </div>
@@ -122,14 +122,14 @@ export default function Home() {
           </button>
           <button
             onClick={handleLoginStart}
-            className="text-gray-600 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-600 hover:decoration-emerald-500"
+            className="text-stone-500 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-600 hover:decoration-emerald-500"
           >
             ログイン
           </button>
         </div>
 
         {/* Legal links */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs text-stone-500">
           <a href="https://www.laiv.jp/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-600">利用規約</a>
           <a href="https://www.laiv.jp/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-600">プライバシーポリシー</a>
           <a href="https://www.laiv.jp/contact/service" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-600">お問い合わせ</a>

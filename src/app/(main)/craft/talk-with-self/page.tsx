@@ -130,7 +130,7 @@ export default function TalkWithSelfPage() {
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="h-6 w-6 animate-spin rounded-full border-4 spinner-warm"></div>
-          <p className="text-sm text-gray-600">読み込み中...</p>
+          <p className="text-sm text-stone-500">読み込み中...</p>
         </div>
       </div>
     );
@@ -144,7 +144,7 @@ export default function TalkWithSelfPage() {
         {/* 利用不可メッセージ */}
         {!canUse && (
           <div className="glass-card mb-4 p-6 text-center">
-            <p className="mb-4 text-gray-700">
+            <p className="mb-4 text-stone-700">
               自分AIと話すには、特徴データが10個以上必要です
             </p>
             <p className="mb-4 text-2xl font-bold text-emerald-600">
@@ -173,7 +173,7 @@ export default function TalkWithSelfPage() {
                       className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                         message.role === 'user'
                           ? 'bg-gradient-to-r from-sky-500 to-blue-500 text-white'
-                          : 'bg-white/90 text-gray-900 shadow-sm'
+                          : 'bg-white/90 text-stone-800 shadow-sm'
                       }`}
                     >
                       <p className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -220,7 +220,7 @@ export default function TalkWithSelfPage() {
                   onKeyPress={handleKeyPress}
                   placeholder="メッセージを入力..."
                   disabled={isLoading}
-                  className="flex-1 rounded-xl border border-sky-200 bg-white/80 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:opacity-50"
+                  className="flex-1 rounded-xl border border-sky-200 bg-white/80 px-4 py-3 text-stone-800 placeholder:text-stone-400 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:opacity-50"
                 />
                 <button
                   onClick={handleSendMessage}

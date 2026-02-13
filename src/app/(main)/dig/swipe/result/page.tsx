@@ -79,8 +79,8 @@ export default function SwipeResultPage() {
         <div className="mx-auto max-w-md">
           <div className="mb-6 text-center">
             <div className="mb-3 text-4xl">🎉</div>
-            <h2 className="text-2xl font-bold text-gray-900">あなたの特徴が見つかりました！</h2>
-            <p className="mt-2 text-sm text-gray-600">スワイプ診断から{resultTraits.length}個の特徴を発見</p>
+            <h2 className="text-2xl font-bold text-stone-800">あなたの特徴が見つかりました！</h2>
+            <p className="mt-2 text-sm text-stone-500">スワイプ診断から{resultTraits.length}個の特徴を発見</p>
           </div>
 
           {/* Trait cards with animation */}
@@ -98,7 +98,7 @@ export default function SwipeResultPage() {
 
           {/* Save status */}
           {isSaving && (
-            <p className="mb-4 text-center text-sm text-gray-500">特徴を保存中...</p>
+            <p className="mb-4 text-center text-sm text-stone-500">特徴を保存中...</p>
           )}
           {saved && (
             <p className="mb-4 text-center text-sm text-emerald-600">特徴を保存しました</p>
@@ -121,7 +121,7 @@ export default function SwipeResultPage() {
                 sessionStorage.removeItem('swipe-result');
                 router.push('/mypage');
               }}
-              className="w-full rounded-xl border border-emerald-200 bg-white/80 py-3 font-semibold text-gray-700 flex items-center justify-center gap-2 hover:bg-emerald-50"
+              className="w-full rounded-xl border border-emerald-200 bg-white/80 py-3 font-semibold text-stone-700 flex items-center justify-center gap-2 hover:bg-emerald-50"
             >
               <User size={18} />
               じぶんを見る

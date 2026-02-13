@@ -42,7 +42,7 @@ export default function SelectModePage() {
 
       <div className="px-4 py-6">
         <div className="mx-auto max-w-4xl">
-          <p className="mb-6 text-center text-sm text-gray-600">目的に合わせたモードを選んでください</p>
+          <p className="mb-6 text-center text-sm text-stone-500">目的に合わせたモードを選んでください</p>
 
           <div className="grid gap-4 md:grid-cols-3">
             {INTERVIEW_MODES.map((mode) => (
@@ -56,15 +56,15 @@ export default function SelectModePage() {
                 </div>
 
                 <div className="text-center">
-                  <h3 className="mb-1 text-lg font-bold text-gray-900">{mode.name}</h3>
-                  <p className="mb-3 text-xs text-gray-600">{mode.description}</p>
+                  <h3 className="mb-1 text-lg font-bold text-stone-800">{mode.name}</h3>
+                  <p className="mb-3 text-xs text-stone-500">{mode.description}</p>
                 </div>
 
                 <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
                   {mode.questionCount === 'endless' ? 'いつでも終了可能' : `${mode.questionCount}問`}
                 </div>
 
-                <ul className="space-y-1 text-xs text-gray-600">
+                <ul className="space-y-1 text-xs text-stone-500">
                   {mode.features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-1">
                       <span className="mt-0.5 text-emerald-500">✓</span>

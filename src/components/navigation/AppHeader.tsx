@@ -23,16 +23,16 @@ export default function AppHeader({ title, showBackButton = false, onBack, right
   };
 
   return (
-    <header className="sticky top-0 z-30 glass-header px-4 py-3 shadow-sm">
-      <div className="relative mx-auto flex max-w-4xl items-center justify-between">
+    <header className="sticky top-0 z-30 glass-header px-4 h-14 shadow-sm flex items-center">
+      <div className="relative mx-auto flex w-full max-w-4xl items-center justify-between">
         <div className="flex items-center gap-2 min-w-[40px]">
           {showBackButton && (
             <button onClick={handleBack} className="rounded-full p-1 hover:bg-white/50 transition-colors">
-              <ChevronLeft size={24} className="text-gray-700" />
+              <ChevronLeft size={24} className="text-stone-700" />
             </button>
           )}
           {title && (
-            <h1 className="text-lg font-bold text-gray-900">{title}</h1>
+            <h1 className="text-lg font-bold text-stone-800">{title}</h1>
           )}
         </div>
         {!showBackButton && (

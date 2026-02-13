@@ -29,7 +29,7 @@ export default function InterviewRedirect() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="flex items-center gap-3">
         <div className="h-8 w-8 animate-spin rounded-full border-4 spinner-warm"></div>
-        <p className="text-gray-600">リダイレクト中...</p>
+        <p className="text-stone-500">リダイレクト中...</p>
       </div>
     </div>
   );

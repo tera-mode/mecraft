@@ -35,8 +35,8 @@ export default function MenuCard({
           <Icon size={24} className={iconColor} />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="text-base font-bold text-gray-900">{title}</h3>
-          <p className="text-sm text-gray-600">{description}</p>
+          <h3 className="text-base font-bold text-stone-800">{title}</h3>
+          <p className="text-sm text-stone-500">{description}</p>
         </div>
         {!disabled && (
           <button
@@ -48,7 +48,7 @@ export default function MenuCard({
         )}
       </div>
       {disabled && disabledMessage && (
-        <p className="mt-3 text-center text-xs text-gray-500">{disabledMessage}</p>
+        <p className="mt-3 text-center text-xs text-stone-500">{disabledMessage}</p>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f0fdf4;
+  --background: #FAFAF5;
   --foreground: #1a1a1a;
 
   /* Emerald-based color palette */
@@ -62,12 +62,31 @@ body {
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+}
+
+.glass-card-solid {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+}
+
+.trait-card {
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
-  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 3px solid var(--trait-category-color, #059669);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .glass-header {
@@ -94,7 +113,7 @@ body {
 
 /* Gradient backgrounds */
 .bg-gradient-main {
-  background: linear-gradient(135deg, #ecfdf5 0%, #fefce8 50%, #fffbeb 100%);
+  background: linear-gradient(180deg, #F0FDF4 0%, #FAFAF5 40%, #FEF3C7 100%);
 }
 
 .bg-gradient-warm {
@@ -137,7 +156,7 @@ body {
   position: absolute;
   border-radius: 50%;
   filter: blur(60px);
-  opacity: 0.6;
+  opacity: 0.4;
   pointer-events: none;
 }
 
@@ -216,15 +235,40 @@ body {
   100% { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes trait-discover {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4); }
+  50% { transform: scale(1.03); box-shadow: 0 0 20px 4px rgba(5, 150, 105, 0.2); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+
+@keyframes trait-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .animate-scale-in {
   animation: scale-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out forwards;
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+.animate-trait-discover {
+  animation: trait-discover 0.6s ease-out forwards;
+}
+
+.animate-trait-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.5) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: trait-shimmer 1.5s ease-in-out;
 }
 
 /* Button press effect */
+.btn-press {
+  transition: transform 0.1s ease;
+}
+
 .btn-press:active {
   transform: scale(0.97);
 }
@@ -236,7 +280,7 @@ body {
 
 /* Skeleton loading */
 .skeleton {
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background: linear-gradient(90deg, #e7e5e4 25%, #f5f5f4 50%, #e7e5e4 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

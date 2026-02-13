@@ -61,7 +61,7 @@ export default function InterviewPage() {
     rightAction: modeConfig ? (
       <div className="flex items-center gap-2">
         <span className="text-lg">{modeConfig.icon}</span>
-        <span className="text-sm font-medium text-gray-700">{modeConfig.name}</span>
+        <span className="text-sm font-medium text-stone-700">{modeConfig.name}</span>
         {isEndless && (
           <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-600">
             エンドレス
@@ -336,7 +336,7 @@ export default function InterviewPage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 spinner-warm"></div>
-          <p className="text-gray-600">読み込み中...</p>
+          <p className="text-stone-500">読み込み中...</p>
         </div>
       </div>
     );
@@ -444,7 +444,7 @@ export default function InterviewPage() {
             onKeyPress={handleKeyPress}
             placeholder={isCompleted ? 'インタビューは完了しました' : 'メッセージを入力...'}
             disabled={isLoading || isCompleted}
-            className="glass-input flex-1 rounded-full px-5 py-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none disabled:bg-gray-100 disabled:opacity-60"
+            className="glass-input flex-1 rounded-full px-5 py-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none disabled:bg-stone-100 disabled:opacity-60"
           />
           <button
             onClick={handleSendMessage}
@@ -469,16 +469,16 @@ export default function InterviewPage() {
       {showEndConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
           <div className="glass-modal w-full max-w-md rounded-3xl p-6">
-            <h2 className="mb-4 text-center text-xl font-bold text-gray-900">
+            <h2 className="mb-4 text-center text-xl font-bold text-stone-800">
               インタビューを終了しますか？
             </h2>
-            <p className="mb-6 text-center text-sm text-gray-600">
+            <p className="mb-6 text-center text-sm text-stone-500">
               終了すると、これまでの会話内容をもとに結果が生成されます。
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowEndConfirm(false)}
-                className="flex-1 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3 font-semibold text-gray-700 transition-all hover:bg-emerald-50"
+                className="flex-1 rounded-xl border border-emerald-200 bg-white/80 px-4 py-3 font-semibold text-stone-700 transition-all hover:bg-emerald-50"
               >
                 続ける
               </button>

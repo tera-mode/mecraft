@@ -39,7 +39,7 @@ export default function UserHeader({
             {displayName ? '😊' : isGuest ? '👤' : '👨‍💼'}
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-sm font-semibold text-stone-800">
               {displayName
                 ? `${displayName}さん`
                 : isGuest
@@ -47,7 +47,7 @@ export default function UserHeader({
                   : user.email}
             </p>
             {!displayName && isGuest && (
-              <p className="text-xs text-gray-500">一時的なセッション</p>
+              <p className="text-xs text-stone-500">一時的なセッション</p>
             )}
             {showInterviewStatus && displayName && (
               <p className="text-xs text-orange-600">インタビュー中</p>
@@ -60,7 +60,7 @@ export default function UserHeader({
           {showHomeButton && (
             <button
               onClick={() => router.push('/dig')}
-              className="rounded-full border border-orange-200 bg-white/80 px-4 py-2 text-sm font-semibold text-gray-700 backdrop-blur-sm transition-all hover:bg-orange-50 hover:border-orange-300"
+              className="rounded-full border border-orange-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 backdrop-blur-sm transition-all hover:bg-orange-50 hover:border-orange-300"
             >
               HOME
             </button>

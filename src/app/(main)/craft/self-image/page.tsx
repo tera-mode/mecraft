@@ -137,7 +137,7 @@ export default function SelfImagePage() {
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="h-6 w-6 animate-spin rounded-full border-4 spinner-warm"></div>
-          <p className="text-sm text-gray-600">読み込み中...</p>
+          <p className="text-sm text-stone-500">読み込み中...</p>
         </div>
       </div>
     );
@@ -159,7 +159,7 @@ export default function SelfImagePage() {
         {/* 特徴数チェック */}
         {!canGenerate && (
           <div className="glass-card mb-6 p-6 text-center">
-            <p className="mb-4 text-gray-700">
+            <p className="mb-4 text-stone-700">
               自分画像を生成するには、特徴データが5個以上必要です
             </p>
             <p className="mb-4 text-2xl font-bold text-emerald-600">
@@ -177,7 +177,7 @@ export default function SelfImagePage() {
         {/* 生成ボタン */}
         {canGenerate && (
           <div className="glass-card mb-6 p-6 text-center">
-            <p className="mb-4 text-gray-700">
+            <p className="mb-4 text-stone-700">
               特徴データ: <span className="font-bold text-emerald-600">{traitCount}個</span>
             </p>
             <button
@@ -197,22 +197,22 @@ export default function SelfImagePage() {
 
         {/* 生成された画像一覧（履歴） */}
         <div className="glass-card p-6">
-          <h2 className="mb-6 text-xl font-bold text-gray-800">
+          <h2 className="mb-6 text-xl font-bold text-stone-800">
             生成履歴
             {selfImages.length > 0 && (
-              <span className="ml-2 text-sm font-normal text-gray-500">
+              <span className="ml-2 text-sm font-normal text-stone-500">
                 ({selfImages.length}件)
               </span>
             )}
           </h2>
 
           {selfImages.length === 0 ? (
-            <p className="py-8 text-center text-gray-500">まだ画像が生成されていません</p>
+            <p className="py-8 text-center text-stone-500">まだ画像が生成されていません</p>
           ) : (
             <div className="grid gap-6 md:grid-cols-2">
               {selfImages.map((selfImage) => (
                 <div key={selfImage.id} className="rounded-xl bg-white/80 p-4 shadow-md">
-                  <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+                  <div className="relative aspect-square overflow-hidden rounded-lg bg-stone-100">
                     <Image
                       src={selfImage.squareImageUrl}
                       alt="自分画像"
@@ -235,7 +235,7 @@ export default function SelfImagePage() {
                     <button
                       onClick={() => handleDelete(selfImage.id)}
                       disabled={isDeleting === selfImage.id}
-                      className="flex items-center justify-center rounded-lg bg-gray-200 px-3 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-300 disabled:opacity-50"
+                      className="flex items-center justify-center rounded-lg bg-stone-200 px-3 py-2 text-sm text-stone-500 transition-colors hover:bg-stone-300 disabled:opacity-50"
                     >
                       {isDeleting === selfImage.id ? (
                         '...'
@@ -247,10 +247,10 @@ export default function SelfImagePage() {
 
                   {/* 生成理由 */}
                   {selfImage.reason && (
-                    <p className="mt-3 text-sm leading-relaxed text-gray-600">{selfImage.reason}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-stone-500">{selfImage.reason}</p>
                   )}
 
-                  <p className="mt-3 text-xs text-gray-400">
+                  <p className="mt-3 text-xs text-stone-400">
                     生成日時:{' '}
                     {selfImage.generatedAt
                       ? typeof selfImage.generatedAt === 'object' &&

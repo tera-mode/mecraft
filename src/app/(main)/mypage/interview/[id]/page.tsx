@@ -74,7 +74,7 @@ export default function InterviewDetail() {
     return (
       <>
         <div className="px-4 py-8 text-center">
-          <p className="text-gray-700">インタビューが見つかりませんでした</p>
+          <p className="text-stone-700">インタビューが見つかりませんでした</p>
           <button onClick={() => router.push('/mypage')} className="mt-4 text-emerald-600 underline">
             じぶんページに戻る
           </button>
@@ -92,25 +92,25 @@ export default function InterviewDetail() {
         <div className="mx-auto max-w-4xl">
           {/* Profile */}
           <div className="glass-card mb-6 p-6">
-            <h2 className="mb-4 text-xl font-bold text-gray-800">プロフィール</h2>
+            <h2 className="mb-4 text-xl font-bold text-stone-800">プロフィール</h2>
             <div className="grid gap-3 md:grid-cols-2">
               {interviewData.fixed.name && (
-                <div><span className="font-semibold text-gray-700">名前:</span> {interviewData.fixed.name}</div>
+                <div><span className="font-semibold text-stone-700">名前:</span> {interviewData.fixed.name}</div>
               )}
               {interviewData.fixed.nickname && (
-                <div><span className="font-semibold text-gray-700">ニックネーム:</span> {interviewData.fixed.nickname}</div>
+                <div><span className="font-semibold text-stone-700">ニックネーム:</span> {interviewData.fixed.nickname}</div>
               )}
               {interviewData.fixed.gender && (
-                <div><span className="font-semibold text-gray-700">性別:</span> {interviewData.fixed.gender}</div>
+                <div><span className="font-semibold text-stone-700">性別:</span> {interviewData.fixed.gender}</div>
               )}
               {interviewData.fixed.age && (
-                <div><span className="font-semibold text-gray-700">年齢:</span> {interviewData.fixed.age}歳</div>
+                <div><span className="font-semibold text-stone-700">年齢:</span> {interviewData.fixed.age}歳</div>
               )}
               {interviewData.fixed.location && (
-                <div><span className="font-semibold text-gray-700">居住地:</span> {interviewData.fixed.location}</div>
+                <div><span className="font-semibold text-stone-700">居住地:</span> {interviewData.fixed.location}</div>
               )}
               {interviewData.fixed.occupation && (
-                <div><span className="font-semibold text-gray-700">職業:</span> {interviewData.fixed.occupation}</div>
+                <div><span className="font-semibold text-stone-700">職業:</span> {interviewData.fixed.occupation}</div>
               )}
             </div>
           </div>
@@ -118,13 +118,13 @@ export default function InterviewDetail() {
           {/* Dynamic data */}
           {interviewData.dynamic && Object.keys(interviewData.dynamic).length > 0 && (
             <div className="glass-card mb-6 p-6">
-              <h2 className="mb-4 text-xl font-bold text-gray-800">深掘り情報</h2>
+              <h2 className="mb-4 text-xl font-bold text-stone-800">深掘り情報</h2>
               <div className="space-y-4">
                 {Object.entries(interviewData.dynamic).map(([key, item]) => (
                   <div key={key} className="glass rounded-xl p-4">
                     <p className="mb-1 text-xs font-semibold text-emerald-600">{item.category}</p>
-                    <p className="mb-2 font-semibold text-gray-800">Q: {item.question}</p>
-                    <p className="text-gray-700">A: {item.answer}</p>
+                    <p className="mb-2 font-semibold text-stone-800">Q: {item.question}</p>
+                    <p className="text-stone-700">A: {item.answer}</p>
                   </div>
                 ))}
               </div>
@@ -141,7 +141,7 @@ export default function InterviewDetail() {
             </button>
             <button
               onClick={() => router.push('/mypage')}
-              className="w-full rounded-xl border border-emerald-200 bg-white/80 py-3 font-semibold text-gray-700 hover:bg-emerald-50"
+              className="w-full rounded-xl border border-emerald-200 bg-white/80 py-3 font-semibold text-stone-700 hover:bg-emerald-50"
             >
               じぶんページに戻る
             </button>

@@ -135,18 +135,18 @@ export default function SwipeCard({ question, currentIndex, totalCount, onSelect
           <div
             key={i}
             className={`h-2 rounded-full transition-all ${
-              i <= currentIndex ? 'w-8 bg-amber-400' : 'w-2 bg-gray-200'
+              i <= currentIndex ? 'w-8 bg-amber-400' : 'w-2 bg-stone-200'
             }`}
           />
         ))}
       </div>
 
-      <p className="mb-6 text-center text-sm text-gray-500">
+      <p className="mb-6 text-center text-sm text-stone-500">
         {currentIndex + 1} / {totalCount}
       </p>
 
       {/* Swipe hint */}
-      <div className="mb-3 flex justify-between px-4 text-xs text-gray-400">
+      <div className="mb-3 flex justify-between px-4 text-xs text-stone-400">
         <span>← A</span>
         <span>B →</span>
       </div>
@@ -180,21 +180,21 @@ export default function SwipeCard({ question, currentIndex, totalCount, onSelect
           <span className="rounded-xl bg-emerald-400 px-6 py-3 text-2xl font-bold text-white shadow-lg">B</span>
         </div>
 
-        <h3 className="mb-6 text-center text-lg font-bold text-gray-800">
+        <h3 className="mb-6 text-center text-lg font-bold text-stone-800">
           あなたはどっち？
         </h3>
 
         {/* Option labels */}
         <div className="mb-4 flex items-center gap-3">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-200 text-sm font-bold text-amber-700">A</span>
-          <span className="text-sm font-medium text-gray-700">{question.optionA}</span>
+          <span className="text-sm font-medium text-stone-700">{question.optionA}</span>
         </div>
 
-        <div className="mb-2 text-center text-xs text-gray-400">or</div>
+        <div className="mb-2 text-center text-xs text-stone-400">or</div>
 
         <div className="flex items-center gap-3">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-200 text-sm font-bold text-emerald-700">B</span>
-          <span className="text-sm font-medium text-gray-700">{question.optionB}</span>
+          <span className="text-sm font-medium text-stone-700">{question.optionB}</span>
         </div>
       </div>
 

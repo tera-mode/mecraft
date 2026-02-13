@@ -18,13 +18,13 @@ export default function EveryonePage() {
               <Users size={40} className="text-rose-600" />
             </div>
           </div>
-          <p className="mb-8 text-gray-600">みんなの特徴を見て刺激をもらおう</p>
+          <p className="mb-8 text-stone-500">みんなの特徴を見て刺激をもらおう</p>
 
           <div className="glass-card mx-auto max-w-md p-8">
             <Sparkles size={32} className="mx-auto mb-4 text-rose-400" />
-            <h3 className="mb-2 text-lg font-semibold text-gray-900">Coming Soon</h3>
-            <p className="text-gray-600">この機能は近日公開予定です</p>
-            <p className="mt-2 text-sm text-gray-400">
+            <h3 className="mb-2 text-lg font-semibold text-stone-800">Coming Soon</h3>
+            <p className="text-stone-500">この機能は近日公開予定です</p>
+            <p className="mt-2 text-sm text-stone-400">
               他のユーザーの特徴やアウトプットを閲覧・共有できるようになります
             </p>
           </div>
