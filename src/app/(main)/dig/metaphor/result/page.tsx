@@ -80,7 +80,7 @@ export default function MetaphorResultPage() {
 
   return (
     <div className="px-4 py-6">
-      <div className="mx-auto max-w-md">
+      <div className="mx-auto max-w-4xl">
         <div className="mb-6 text-center">
           <div className="mb-3 text-4xl">✨</div>
           <h2 className="text-2xl font-bold text-stone-800">新しい特徴を発見！</h2>

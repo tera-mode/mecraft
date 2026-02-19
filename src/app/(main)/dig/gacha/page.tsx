@@ -62,7 +62,7 @@ export default function GachaPage() {
 
   return (
     <div className="px-4 py-6">
-      <div className="mx-auto max-w-md">
+      <div className="mx-auto max-w-4xl">
         <div className="mb-6 text-center">
           <div className="mb-2 text-4xl">🎰</div>
           <h2 className="text-lg font-bold text-stone-800">今日の質問</h2>

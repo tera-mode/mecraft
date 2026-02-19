@@ -64,7 +64,7 @@ export default function TraitDetailPage() {
   return (
     <>
       <div className="px-4 py-6">
-        <div className="mx-auto max-w-lg">
+        <div className="mx-auto max-w-4xl">
           {/* Main card */}
           <div className={`rounded-2xl border-2 p-6 mb-6 ${categoryColors}`}>
             <div className="flex items-center gap-3 mb-4">

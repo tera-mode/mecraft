@@ -29,7 +29,7 @@ export default function DigPage() {
 
   return (
     <div className="px-4 py-6">
-      <div className="mx-auto max-w-lg">
+      <div className="mx-auto max-w-4xl">
         <p className="mb-6 text-center text-sm text-stone-500">5つの方法であなたの特徴を発見</p>
 
         {/* 今日のひと掘り */}

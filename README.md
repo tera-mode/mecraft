@@ -21,7 +21,7 @@ AIとの会話や診断で自分の特徴を集め、自己PR・プロフィー�
 | ストレージ | Firebase Storage |
 | 認証 | Firebase Auth (Google, Email/Password, Anonymous) |
 | ホスティング | Vercel |
-| AI | Gemini API (gemini-2.0-flash-exp) |
+| AI | Gemini API (gemini-2.5-flash / gemini-2.5-pro) |
 
 ## 環境構築
 

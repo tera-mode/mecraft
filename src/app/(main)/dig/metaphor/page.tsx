@@ -74,7 +74,7 @@ export default function MetaphorPage() {
 
   return (
     <div className="px-4 py-6">
-      <div className="mx-auto max-w-md">
+      <div className="mx-auto max-w-4xl">
         <div className="mb-6 text-center">
           <div className="mb-2 text-4xl">{question.icon}</div>
           <p className="text-sm text-stone-500">今日のお題: {question.theme}</p>

@@ -85,7 +85,7 @@
 
 - **Gemini API** (`src/lib/gemini.ts`)
   - Gemini APIクライアントの初期化
-  - gemini-2.0-flash-expモデルを使用
+  - gemini-2.5-flash / gemini-2.5-proモデルを使用
 
 - **インタビュワー設定** (`src/lib/interviewers.ts`)
   - インタビュワーの定義

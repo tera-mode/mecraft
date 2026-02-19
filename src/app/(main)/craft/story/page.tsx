@@ -183,7 +183,7 @@ export default function StorySetupPage() {
 
   return (
     <div className="px-4 py-6">
-      <div className="mx-auto max-w-lg">
+      <div className="mx-auto max-w-4xl">
         {/* ヘッダー */}
         <div className="mb-6 text-center">
           <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-orange-200 to-amber-200">

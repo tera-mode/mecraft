@@ -161,7 +161,7 @@ export default function StoryViewPage({
   if (showCompletion && story.status === 'completed') {
     return (
       <div className="px-4 py-6">
-        <div className="mx-auto max-w-lg">
+        <div className="mx-auto max-w-4xl">
           <div className="mb-6 text-center">
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-200 to-amber-200">
               <BookOpen size={36} className="text-orange-600" />

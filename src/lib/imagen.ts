@@ -149,10 +149,17 @@ Art style requirements:
 - Show them actively engaged in the activity, not just posing
 - The person's appearance MUST match their age (${ageDescription || 'adult'})
 - Modern, clean composition suitable for social media profile
-- NO TEXT or letters anywhere in the image
 - High quality, professional illustration
 - The face should be clearly visible and expressive
-- Natural Japanese features and appearance`;
+- Natural Japanese features and appearance
+
+STRICT REQUIREMENTS — absolutely no exceptions:
+- NO text, letters, numbers, or characters of any kind anywhere in the image
+- NO speech bubbles, dialogue boxes, or comic-style callouts
+- NO captions, labels, titles, or annotations
+- NO watermarks, logos, or signatures
+- NO signs, banners, or readable writing in the background
+- Pure visual scene only, zero text elements`;
 
   return { prompt, situation: selectedSituation };
 }

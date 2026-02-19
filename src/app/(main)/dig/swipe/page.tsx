@@ -105,7 +105,7 @@ export default function SwipePage() {
 
   return (
     <div className="px-4 py-6">
-      <div className="mx-auto max-w-md">
+      <div className="mx-auto max-w-4xl">
         <SwipeCard
           question={questions[currentIndex]}
           currentIndex={currentIndex}
