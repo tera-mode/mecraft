@@ -212,6 +212,7 @@ export default function InterviewPage() {
     title: 'AIインタビュー',
     showBackButton: true,
     onBack: () => router.push('/dig'),
+    rightActionKey: isVoiceModeOn,
     rightAction: modeConfig ? (
       <div className="flex items-center gap-2">
         <VoiceToggle isOn={isVoiceModeOn} onToggle={setIsVoiceModeOn} />

@@ -91,6 +91,7 @@ export default function TalkWithSelfPage() {
     title: '自分AIと話す',
     showBackButton: true,
     onBack: () => router.push('/craft'),
+    rightActionKey: isVoiceModeOn,
     rightAction: <VoiceToggle isOn={isVoiceModeOn} onToggle={setIsVoiceModeOn} />,
   });
 

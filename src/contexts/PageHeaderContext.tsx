@@ -7,6 +7,7 @@ export interface PageHeaderConfig {
   showBackButton?: boolean;
   onBack?: () => void;
   rightAction?: ReactNode;
+  rightActionKey?: string | number | boolean;
   hideHeader?: boolean;
 }
 
@@ -37,7 +38,7 @@ export function usePageHeader(config: PageHeaderConfig) {
     setConfig(config);
     return () => setConfig({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.title, config.showBackButton, config.hideHeader, !!config.rightAction]);
+  }, [config.title, config.showBackButton, config.hideHeader, !!config.rightAction, config.rightActionKey]);
 }
 
 export function usePageHeaderConfig() {
