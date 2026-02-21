@@ -37,6 +37,26 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-main px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebApplication',
+            name: 'じぶんクラフト',
+            url: 'https://mecraft.life',
+            description: 'AIとの会話や診断で自分の特徴を集め、自己PR・キャッチコピー等を生成するサービス',
+            applicationCategory: 'LifestyleApplication',
+            operatingSystem: 'Web',
+            offers: {
+              '@type': 'Offer',
+              price: '0',
+              priceCurrency: 'JPY',
+            },
+            inLanguage: 'ja',
+          }),
+        }}
+      />
       {/* 装飾用グラデーションオーブ */}
       <div className="gradient-orb gradient-orb-emerald absolute -left-32 top-20 h-80 w-80" />
       <div className="gradient-orb gradient-orb-amber absolute -right-32 bottom-20 h-72 w-72" />

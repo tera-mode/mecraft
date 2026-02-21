@@ -10,6 +10,8 @@ import { useTraits } from '@/contexts/TraitsContext';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 import { SelfImage, UserProfile, ProfileFieldKey } from '@/types';
 import ProfileRequirementModal from '@/components/ui/ProfileRequirementModal';
+import ShareCard from '@/components/share/ShareCard';
+import ShareButton from '@/components/share/ShareButton';
 
 export default function SelfImagePage() {
   const router = useRouter();
@@ -238,6 +240,19 @@ export default function SelfImagePage() {
                         <Trash2 size={14} />
                       )}
                     </button>
+                  </div>
+
+                  {/* シェア */}
+                  <div className="mt-4 space-y-3">
+                    <ShareCard
+                      type="self-image"
+                      data={{ imageUrl: selfImage.squareImageUrl }}
+                      nickname={userProfile?.nickname || 'あなた'}
+                    />
+                    <ShareButton
+                      text={`AIが私の特徴から自分像イラストを生成してくれた🎨\nじぶんクラフトで試してみて👇`}
+                      url="https://mecraft.life"
+                    />
                   </div>
 
                   {/* 生成理由 */}

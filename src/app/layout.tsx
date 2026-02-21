@@ -16,11 +16,32 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "じぶんクラフト",
-  description: "AIとの会話や診断で自分の特徴を集め、自己PR・プロフィール等のアウトプットを生成",
+  title: "じぶんクラフト - AIで自分の特徴を掘り出そう",
+  description: "スワイプ診断・AIインタビューで自分の特徴を集めて、キャッチコピー・自己PR・レアリティ診断を生成。就活生・自己分析したい人に。",
   icons: {
     icon: "/image/mecraft_fav.png",
     apple: "/image/mecraft_fav.png",
+  },
+  openGraph: {
+    title: "じぶんクラフト - AIで自分の特徴を掘り出そう",
+    description: "スワイプ診断・AIインタビューで自分の特徴を集めて、キャッチコピー・自己PR・レアリティ診断を生成。就活生・自己分析したい人に。",
+    url: "https://mecraft.life",
+    siteName: "じぶんクラフト",
+    images: [
+      {
+        url: "https://mecraft.life/image/mecraft_logo.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "じぶんクラフト - AIで自分の特徴を掘り出そう",
+    description: "スワイプ診断・AIインタビューで自分の特徴を集めて、キャッチコピー・自己PR・レアリティ診断を生成。",
+    images: ["https://mecraft.life/image/mecraft_logo.png"],
   },
 };
 

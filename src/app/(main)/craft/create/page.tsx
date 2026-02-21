@@ -18,7 +18,6 @@ function CreateContent() {
   const [selectedType, setSelectedType] = useState<OutputTypeConfig | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<string>('');
-  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [history, setHistory] = useState<Output[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
@@ -83,7 +82,8 @@ function CreateContent() {
     setError('');
 
     try {
-      const response = await authenticatedFetch('/api/generate-output', {
+      // 生成
+      const genResponse = await authenticatedFetch('/api/generate-output', {
         method: 'POST',
         body: JSON.stringify({
           type: selectedType.id,
@@ -97,45 +97,32 @@ function CreateContent() {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate output');
+      if (!genResponse.ok) throw new Error('Failed to generate output');
+      const genData = await genResponse.json();
+      const content: string = genData.content;
 
-      const data = await response.json();
-      setGeneratedContent(data.content);
+      // 自動保存
+      if (user) {
+        const saveResponse = await authenticatedFetch('/api/outputs', {
+          method: 'POST',
+          body: JSON.stringify({
+            userId: user.uid,
+            type: selectedType.id,
+            content,
+            traits,
+            interviewIds: [],
+          }),
+        });
+        if (!saveResponse.ok) throw new Error('Failed to save output');
+      }
+
+      setGeneratedContent(content);
+      await loadHistory(selectedType.id);
     } catch (err) {
       console.error('Error generating output:', err);
       setError('生成に失敗しました。もう一度お試しください。');
     } finally {
       setIsGenerating(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!selectedType || !generatedContent || !user) return;
-
-    setIsSaving(true);
-    setError('');
-
-    try {
-      const response = await authenticatedFetch('/api/outputs', {
-        method: 'POST',
-        body: JSON.stringify({
-          userId: user.uid,
-          type: selectedType.id,
-          content: generatedContent,
-          traits,
-          interviewIds: [],
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to save output');
-
-      setGeneratedContent('');
-      await loadHistory(selectedType.id);
-    } catch (err) {
-      console.error('Error saving output:', err);
-      setError('保存に失敗しました。もう一度お試しください。');
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -207,32 +194,28 @@ function CreateContent() {
             {/* 直接アクセス時: 説明 + 生成ボタンのみ */}
             {isDirectAccess && selectedType ? (
               <>
-                {/* プレビュー表示 */}
+                {/* 生成結果（自動保存済み） */}
                 {generatedContent ? (
                   <div className="glass-card mb-6 p-6">
-                    <h3 className="mb-3 text-center text-sm font-semibold text-stone-500">生成結果</h3>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-stone-500">生成結果</h3>
+                      <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                        ✓ 保存済み
+                      </span>
+                    </div>
                     <div className="mb-4 rounded-xl bg-white/50 p-4">
                       <p className="whitespace-pre-wrap text-stone-800">{generatedContent}</p>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-stone-500">{generatedContent.length}文字</span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleGenerate}
-                          disabled={isGenerating}
-                          className="flex items-center gap-1.5 rounded-xl border border-stone-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition-all hover:bg-stone-50 disabled:opacity-50"
-                        >
-                          <RefreshCw size={14} />
-                          再生成
-                        </button>
-                        <button
-                          onClick={handleSave}
-                          disabled={isSaving}
-                          className="btn-gradient-primary rounded-xl px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-                        >
-                          {isSaving ? '保存中...' : '保存する'}
-                        </button>
-                      </div>
+                      <button
+                        onClick={handleGenerate}
+                        disabled={isGenerating}
+                        className="flex items-center gap-1.5 rounded-xl border border-stone-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition-all hover:bg-stone-50 disabled:opacity-50"
+                      >
+                        <RefreshCw size={14} />
+                        再生成
+                      </button>
                     </div>
                   </div>
                 ) : (
@@ -315,31 +298,27 @@ function CreateContent() {
                   </div>
                 )}
 
-                {/* 生成結果 */}
+                {/* 生成結果（自動保存済み） */}
                 {generatedContent && (
                   <div className="glass-card mb-6 p-6">
-                    <h3 className="mb-4 text-lg font-bold text-stone-800">生成結果</h3>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-stone-800">生成結果</h3>
+                      <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                        ✓ 保存済み
+                      </span>
+                    </div>
                     <div className="mb-4 rounded-xl bg-white/50 p-4">
                       <p className="whitespace-pre-wrap text-stone-800">{generatedContent}</p>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-stone-500">{generatedContent.length}文字</span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleGenerate}
-                          disabled={isGenerating}
-                          className="rounded-xl border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition-all hover:bg-sky-50 disabled:opacity-50"
-                        >
-                          再生成
-                        </button>
-                        <button
-                          onClick={handleSave}
-                          disabled={isSaving}
-                          className="btn-gradient-primary rounded-xl px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-                        >
-                          {isSaving ? '保存中...' : '保存する'}
-                        </button>
-                      </div>
+                      <button
+                        onClick={handleGenerate}
+                        disabled={isGenerating}
+                        className="rounded-xl border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition-all hover:bg-sky-50 disabled:opacity-50"
+                      >
+                        再生成
+                      </button>
                     </div>
                   </div>
                 )}

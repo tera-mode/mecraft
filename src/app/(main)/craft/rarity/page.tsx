@@ -9,6 +9,8 @@ import ProfileRequirementModal from '@/components/ui/ProfileRequirementModal';
 import { useTraits } from '@/contexts/TraitsContext';
 import { usePageHeader } from '@/contexts/PageHeaderContext';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
+import ShareCard from '@/components/share/ShareCard';
+import ShareButton from '@/components/share/ShareButton';
 
 interface RareCombination {
   traitLabels: string[];
@@ -294,6 +296,19 @@ export default function RarityPage() {
                   <p className="text-sm font-semibold text-stone-600">（上位 {result.percentage}%）</p>
                 </div>
               </div>
+            </div>
+
+            {/* シェアカード */}
+            <div className="space-y-3">
+              <ShareCard
+                type="rarity"
+                data={result}
+                nickname={userProfile?.nickname || 'あなた'}
+              />
+              <ShareButton
+                text={`AIで自己分析したら「${result.rank}（${result.rankLabel}）」だった！\n日本人口の上位${result.percentage}%という結果に…\nあなたは何ランク？`}
+                url="https://mecraft.life"
+              />
             </div>
 
             {/* 判定理由 */}

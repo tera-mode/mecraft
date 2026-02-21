@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Copy, Trash2, Check, RefreshCw } from 'lucide-react';
+import { Copy, Trash2, Check } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePageHeader } from '@/contexts/PageHeaderContext';
 import { useTraits } from '@/contexts/TraitsContext';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 import { Output } from '@/types';
+import ShareCard from '@/components/share/ShareCard';
+import ShareButton from '@/components/share/ShareButton';
 
 export default function CatchcopyPage() {
   const router = useRouter();
@@ -18,8 +20,7 @@ export default function CatchcopyPage() {
   const [history, setHistory] = useState<Output[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [latestGenerated, setLatestGenerated] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -73,10 +74,11 @@ export default function CatchcopyPage() {
 
     setIsGenerating(true);
     setError('');
-    setPreview(null);
+    setLatestGenerated(null);
 
     try {
-      const response = await authenticatedFetch('/api/generate-output', {
+      // 生成
+      const genResponse = await authenticatedFetch('/api/generate-output', {
         method: 'POST',
         body: JSON.stringify({
           type: 'catchcopy',
@@ -87,45 +89,32 @@ export default function CatchcopyPage() {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate');
+      if (!genResponse.ok) throw new Error('Failed to generate');
+      const genData = await genResponse.json();
+      const content: string = genData.content;
 
-      const data = await response.json();
-      setPreview(data.content);
+      // 自動保存
+      if (user) {
+        const saveResponse = await authenticatedFetch('/api/outputs', {
+          method: 'POST',
+          body: JSON.stringify({
+            userId: user.uid,
+            type: 'catchcopy',
+            content,
+            traits,
+            interviewIds: [],
+          }),
+        });
+        if (!saveResponse.ok) throw new Error('Failed to save');
+      }
+
+      setLatestGenerated(content);
+      await loadHistory();
     } catch (err) {
       console.error('Error generating catchcopy:', err);
       setError('生成に失敗しました。もう一度お試しください。');
     } finally {
       setIsGenerating(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!preview || !user) return;
-
-    setIsSaving(true);
-    setError('');
-
-    try {
-      const response = await authenticatedFetch('/api/outputs', {
-        method: 'POST',
-        body: JSON.stringify({
-          userId: user.uid,
-          type: 'catchcopy',
-          content: preview,
-          traits,
-          interviewIds: [],
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to save');
-
-      setPreview(null);
-      await loadHistory();
-    } catch (err) {
-      console.error('Error saving catchcopy:', err);
-      setError('保存に失敗しました。もう一度お試しください。');
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -135,7 +124,6 @@ export default function CatchcopyPage() {
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     } catch {
-      // Fallback
       const textarea = document.createElement('textarea');
       textarea.value = text;
       document.body.appendChild(textarea);
@@ -159,6 +147,9 @@ export default function CatchcopyPage() {
       if (!response.ok) throw new Error('Failed to delete');
 
       setHistory(history.filter((o) => o.id !== outputId));
+      if (latestGenerated && history[0]?.id === outputId) {
+        setLatestGenerated(null);
+      }
     } catch (err) {
       console.error('Error deleting catchcopy:', err);
       alert('削除に失敗しました');
@@ -206,35 +197,37 @@ export default function CatchcopyPage() {
           </div>
         ) : (
           <>
-            {/* プレビュー表示 */}
-            {preview && (
-              <div className="glass-card mb-6 p-6">
-                <h3 className="mb-3 text-center text-sm font-semibold text-stone-500">生成結果</h3>
-                <p className="mb-6 text-center text-xl font-bold leading-relaxed text-stone-800">
-                  {preview}
-                </p>
-                <div className="flex items-center justify-center gap-3">
-                  <button
-                    onClick={handleGenerate}
-                    disabled={isGenerating}
-                    className="flex items-center gap-1.5 rounded-xl border border-amber-200 bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition-all hover:bg-amber-50 disabled:opacity-50"
-                  >
-                    <RefreshCw size={14} />
-                    再生成
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-2 text-sm font-bold text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
-                  >
-                    {isSaving ? '保存中...' : '保存する'}
-                  </button>
+            {/* 最新の生成結果（自動保存済み）*/}
+            {latestGenerated && (
+              <>
+                <div className="glass-card mb-4 p-6">
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-stone-500">生成結果</h3>
+                    <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                      ✓ 保存済み
+                    </span>
+                  </div>
+                  <p className="text-center text-xl font-bold leading-relaxed text-stone-800">
+                    {latestGenerated}
+                  </p>
                 </div>
-              </div>
+                <div className="glass-card mb-6 space-y-4 p-6">
+                  <h3 className="text-center text-sm font-semibold text-stone-500">シェアする</h3>
+                  <ShareCard
+                    type="catchcopy"
+                    data={{ catchcopy: latestGenerated }}
+                    nickname={userProfile?.nickname || 'あなた'}
+                  />
+                  <ShareButton
+                    text={`AIが私を分析して出したキャッチコピーが「${latestGenerated}」だった\nあなたのキャッチコピーは？👇`}
+                    url="https://mecraft.life"
+                  />
+                </div>
+              </>
             )}
 
-            {/* 生成ボタン（プレビューがない時のみ表示） */}
-            {!preview && (
+            {/* 生成ボタン（最新結果がない時のみ） */}
+            {!latestGenerated && (
               <div className="glass-card mb-6 p-6 text-center">
                 <p className="mb-4 text-stone-700">
                   特徴データ: <span className="font-bold text-emerald-600">{traitCount}個</span>
